@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
 import { getDomain } from "../../helpers/getDomain";
 import User from "../shared/models/User";
-import { withRouter } from "react-router-dom";
+import {Redirect, withRouter} from "react-router-dom";
 import { Button } from "../../views/design/Button";
 
 const FormContainer = styled.div`
@@ -56,6 +56,30 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
+const RegisterFormContainer = styled.div`
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100px;
+  justify-content: center;
+`;
+
+const RegisterForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 60%;
+  height: 100px;
+  font-size: 10px;
+  font-weight: 300;
+  padding-left: 37px;
+  padding-right: 37px;
+  border-radius: 5px;
+  background: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
+  transition: opacity 0.5s ease, transform 0.5s ease;
+`;
+
 /**
  * Classes in React allow you to have an internal state within the class and to have the React life-cycle for your component.
  * You should have a class (instead of a functional component) when:
@@ -69,14 +93,14 @@ class Login extends React.Component {
   /**
    * If you don’t initialize the state and you don’t bind methods, you don’t need to implement a constructor for your React component.
    * The constructor for a React component is called before it is mounted (rendered).
-   * In this case the initial state is defined in the constructor. The state is a JS object containing two fields: name and username
+   * In this case the initial state is defined in the constructor. The state is a JS object containing two fields: lastname and username
    * These fields are then handled in the onChange() methods in the resp. InputFields
    */
   constructor() {
     super();
     this.state = {
-      name: null,
-      username: null
+      username: null,
+      password: null
     };
   }
   /**
@@ -84,23 +108,29 @@ class Login extends React.Component {
    * If the request is successful, a new user is returned to the front-end and its token is stored in the localStorage.
    */
   login() {
-    fetch(`${getDomain()}/users`, {
-      method: "POST",
+    fetch(`${getDomain()}/users/username/`+this.state.username, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
+      /** body: JSON.stringify({
         username: this.state.username,
-        name: this.state.name
-      })
+        password: this.state.password
+      }) */
     })
       .then(response => response.json())
       .then(returnedUser => {
         const user = new User(returnedUser);
-        // store the token into the local storage
-        localStorage.setItem("token", user.token);
-        // user login successfully worked --> navigate to the route /game in the GameRouter
-        this.props.history.push(`/game`);
+        if(!(user.username === null || user.username === undefined || user.password === null || user.password === undefined) && //existing user
+            (user.username === this.state.username && user.password === this.state.password)) {//identical login credentials
+          //alert("username and password identical");
+          // store the token into the local storage
+          localStorage.setItem("token", user.token);
+          // user login successfully worked --> navigate to the route /game in the GameRouter
+          this.props.history.push(`/game`);
+        } else {
+          alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
+        }
       })
       .catch(err => {
         if (err.message.match(/Failed to fetch/)) {
@@ -109,6 +139,10 @@ class Login extends React.Component {
           alert(`Something went wrong during the login: ${err.message}`);
         }
       });
+  }
+
+  redirectRegistrator() {
+    this.props.history.push(`/registration`);
   }
 
   /**
@@ -143,16 +177,16 @@ class Login extends React.Component {
                 this.handleInputChange("username", e.target.value);
               }}
             />
-            <Label>Name</Label>
+            <Label>Password</Label>
             <InputField
-              placeholder="Enter here.."
-              onChange={e => {
-                this.handleInputChange("name", e.target.value);
-              }}
+                placeholder="Enter here.."
+                onChange={e => {
+                  this.handleInputChange("password", e.target.value);
+                }}
             />
             <ButtonContainer>
               <Button
-                disabled={!this.state.username || !this.state.name}
+                disabled={!this.state.username || !this.state.password}
                 width="50%"
                 onClick={() => {
                   this.login();
@@ -163,6 +197,21 @@ class Login extends React.Component {
             </ButtonContainer>
           </Form>
         </FormContainer>
+        <RegisterFormContainer>
+          <RegisterForm>
+            <Label>
+              Need to register a new User?
+            </Label>
+            <Button
+              width="50%"
+              onClick={() => {
+                return this.redirectRegistrator();
+              }}
+            >
+              Register
+            </Button>
+          </RegisterForm>
+        </RegisterFormContainer>
       </BaseContainer>
     );
   }
