@@ -76,11 +76,7 @@ class Game extends React.Component {
               {this.state.users.map(user => {
                 return (
                   <PlayerContainer key={user.id}>
-                    <Player user={user}
-                      handleClick={() => {
-                          this.redirectUserProfileView(user);
-                      }}
-                    />
+                    <Player user={user} />
                   </PlayerContainer>
                 );
               })}

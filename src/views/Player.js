@@ -52,14 +52,10 @@ const Redirector = styled(Link)`
  * https://reactjs.org/docs/components-and-props.html
  * @FunctionalComponent
  */
-const Player = ({ user, handleClick }) => {
+const Player = ({ user }) => {
   return (
-    <Container
-        onClick={() => {
-            handleClick(user);
-        }}
-    >
-        <Redirector to={`users/profile?username=${user.username}`}>
+    <Container>
+        <Redirector to={`/users/profile/${user.username}`}>
             <UserName>{user.username}</UserName>
         </Redirector>
         <p>  </p>
