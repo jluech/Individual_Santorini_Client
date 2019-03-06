@@ -16,7 +16,12 @@ const UserName = styled.div`
   margin-left: 5px;
 `;
 
-const Name = styled.div`
+const FirstName = styled.div`
+  font-weight: bold;
+  color: #06c4ff;
+`;
+
+const LastName = styled.div`
   font-weight: bold;
   color: #06c4ff;
 `;
@@ -38,8 +43,10 @@ const Id = styled.div`
 const Player = ({ user }) => {
   return (
     <Container>
-      <Name>{user.name}</Name> <UserName>{user.username}</UserName>
-      <Id>Id: {user.id}</Id>
+        <FirstName>{user.firstname}</FirstName>
+        <LastName>{user.lastname}</LastName>
+        <UserName>{user.username}</UserName>
+        <Id>Id: {user.id}</Id>
     </Container>
   );
 };
