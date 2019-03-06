@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Link from "react-router-dom/es/Link";
 
 const Container = styled.div`
   margin: 6px 0;
@@ -14,22 +15,33 @@ const Container = styled.div`
 const UserName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
+  margin-right: 15px;
 `;
 
 const FirstName = styled.div`
   font-weight: bold;
   color: #06c4ff;
+  margin-right: 5px;
 `;
 
 const LastName = styled.div`
   font-weight: bold;
   color: #06c4ff;
+  margin-right: 10px;
 `;
 
 const Id = styled.div`
   margin-left: auto;
   margin-right: 10px;
   font-weight: bold;
+`;
+
+const Redirector = styled(Link)`
+  color: white;
+  text-decoration: none;
+  &:hover{
+    color: grey;
+  }
 `;
 
 /**
@@ -43,9 +55,12 @@ const Id = styled.div`
 const Player = ({ user }) => {
   return (
     <Container>
-        <FirstName>{user.firstname}</FirstName>
-        <LastName>{user.lastname}</LastName>
-        <UserName>{user.username}</UserName>
+        <Redirector to={`/users/profile/${user.username}`}>
+            <UserName>{user.username}</UserName>
+        </Redirector>
+        <p>  </p>
+        <FirstName>{user.firstName}</FirstName>
+        <LastName>{user.lastName}</LastName>
         <Id>Id: {user.id}</Id>
     </Container>
   );
