@@ -59,10 +59,6 @@ class Game extends React.Component {
       });
   }
 
-  redirectUserProfileView = (user) => {
-      this.props.history.push(`/users/profile?username=${user.username}`);
-  };
-
   render() {
     return (
       <Container>

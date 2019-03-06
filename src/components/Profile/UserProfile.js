@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
-import User from "../shared/models/User";
 //import { withRouter } from "react-router-dom";
 import { Button } from "../../views/design/Button";
-import {getDomain} from "../../helpers/getDomain";
+import {getDomain} from "../../helpers/getDomain"
+//import EditForm from "../components/EditForm"
+// //TODO: write separate EditForm class
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -72,14 +73,22 @@ const ButtonContainer = styled.div`
 class UserProfile extends React.Component {
     constructor(props) {
         super(props);
-        this.id = this.props.match.id;
+        this.id = this.props.match.params.id;
         this.state = {
             firstName: null,
             lastName: null,
-            username: null
+            username: null,
+            loggedInUser: "",
+            user: "",
+            profileEditable: false
         };
-        this.user = new User();
     }
+
+    handleEditOnClick = () => {
+        this.setState((state) => {
+            return {profileEditable: !state.profileEditable}
+        })
+    };
 
     handleStateChange(key, value) {
         // Example: if the key is username, this statement is the equivalent to the following one:
@@ -88,28 +97,36 @@ class UserProfile extends React.Component {
     }
 
     componentDidMount() {
-        this.getUserData();
-    }
-
-    getUserData() {
+        fetch(`${getDomain()}/users/${localStorage.getItem("loggedInAsId")}`)
+            //.then(response => response.json())
+            //.then(user => this.setState({loggedInUser: user.username}))
+        /*
         fetch(`${getDomain()}/users/id/${this.id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
         })
+        */
             .then(response => response.json())
-            .then((response) => {
-                this.user = response.user;
-                this.handleStateChange("username", response.username);
-                this.handleStateChange("firstName", response.firstName);
-                this.handleStateChange("lastName", response.lastName);
-                console.log(`OK: Fetched user data for user ${this.state.username}`)
+            .then(user => {
+                //this.user = user.user;
+                console.log(`username: ${user.username}`);
+                this.setState({loggedInUser: user.username});
+                //this.setState({firstName: user.firstName});
+                //this.setState({lastName: user.lastName});
+            })
+            .then(() => {
+                console.log(`OK: Fetched user data for user ${this.state.loggedInUser}`);
             })
         .catch(err => {
             console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
-            alert(`Something went wrong during the login: ${err.message}`);
-        })
+            alert(`Something went wrong when fetching user data: ${err.message}`);
+        });
+
+        fetch(`${getDomain()}/users/${this.id}`)
+            .then(response => response.json())
+            .then(user => this.setState({user: user}))
     }
 
     redirectGame() {

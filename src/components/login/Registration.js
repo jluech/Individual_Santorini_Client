@@ -63,7 +63,8 @@ class Registrator extends React.Component {
             firstName: null,
             lastName: null,
             username: null,
-            password: null
+            password: null,
+            loggedIn: false
         };
         this.today = new Date();
     }
@@ -90,30 +91,38 @@ class Registrator extends React.Component {
             body: JSON.stringify({
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
-                birthDate: this.state.birthdate,
+                birthdate: this.state.birthdate,
                 password: this.state.password,
                 username: this.state.username
             })
         })
-            .then((response, err) => {
+            .then(response => {
                 if(response.status === 409) {
-                    console.log(`ERROR: Failed to register user ${this.state.username} with status 409 CONFLICT`);
-                    if (err.message.match(/Failed to fetch/)) {
-                        alert("The server cannot be reached. Did you start it?");
-                    } else {
-                        alert(`Something went wrong during the login: ${err.message}`)
-                        //TODO: catch errors for user already existing
-                        //TODO: redirect to register screen in case of error
-                    }
+                    console.log(`ERROR: Failed to register already existing user ${this.state.username} with status 409 CONFLICT`);
+                    alert("This Username is already taken. Please try again with a different Username");
+                    window.location.reload();
                 } else {
                     console.log(`OK: Successfully registered user ${this.state.username}`);
+                    this.setState({loggedIn: true});
+                }
+            })
+            .catch(err => {
+                if (err.message.match(/Failed to fetch/)) {
+                    alert("The server cannot be reached. Did you start it?");
+                } else {
+                    alert(`Something went wrong during the login: ${err.message}`)
+                    window.location.reload();
                 }
             })
             .then(() =>  {
-                this.redirectLogin();
+                if(this.state.loggedIn) {
+                    this.redirectLogin();
+                }
             })
             .then(() => {
-                alert("Registration successful. Try logging in with your new user credentials");
+                if(this.state.loggedIn) {
+                    alert("Registration successful. Try logging in with your new user credentials");
+                }
             })
     }
 
