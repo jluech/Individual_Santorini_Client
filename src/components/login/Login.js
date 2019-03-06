@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
 import { getDomain } from "../../helpers/getDomain";
 import User from "../shared/models/User";
-import {Redirect, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";//removed import for 'Redirect'
 import { Button } from "../../views/design/Button";
 
 const FormContainer = styled.div`
@@ -109,15 +109,15 @@ class Login extends React.Component {
    */
   login() {
     fetch(`${getDomain()}/users/username/`+this.state.username, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      /** body: JSON.stringify({
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          /** body: JSON.stringify({
         username: this.state.username,
         password: this.state.password
       }) */
-    })
+      })
       .then(response => response.json())
       .then(returnedUser => {
         const user = new User(returnedUser);
@@ -179,6 +179,8 @@ class Login extends React.Component {
             />
             <Label>Password</Label>
             <InputField
+                type="password"
+
                 placeholder="Enter here.."
                 onChange={e => {
                   this.handleInputChange("password", e.target.value);

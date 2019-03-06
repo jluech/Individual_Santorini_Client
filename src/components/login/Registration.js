@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
 import { getDomain } from "../../helpers/getDomain";
 import User from "../shared/models/User";
-import { withRouter } from "react-router-dom";
+import {Redirect, withRouter} from "react-router-dom";
 import { Button } from "../../views/design/Button";
+import {Promise as resolve} from "q";
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -61,11 +62,13 @@ class Registrator extends React.Component {
     constructor() {
         super();
         this.state = {
-            firstname: null,
-            lastname: null,
+            firstName: null,
+            lastName: null,
             username: null,
             password: null
         };
+        this.redirect = null; //used for redirectLogin() only
+        this.today = new Date();
     }
 
     handleInputChange(key, value) {
@@ -85,7 +88,7 @@ class Registrator extends React.Component {
         //var date = new Date();
         //var timestamp = date.getTime();
 
-        fetch("${getDomain()}/users/{getUsername()}", { //check for existing user
+        fetch(`${getDomain()}/users/${this.state.username}`, { //check for existing user
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -99,39 +102,45 @@ class Registrator extends React.Component {
             .then(returnedUser => {
                 existingUser = new User(returnedUser);
                 //returnedUser.print();
-            });
-        if(existingUser.username !== this.state.username || existingUser.password !== this.state.password) {//if inexistent register new user
+                if(existingUser.username !== this.state.username || existingUser.password !== this.state.password) {//if inexistent register new user
 
-            //NON-FUNCTIONAL CHECK FOR EXISTING USER!!
+                    //NON-FUNCTIONAL CHECK FOR EXISTING USER!!
 
-            //alert("Got to second fetch");
-            fetch(`${getDomain()}/users`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    firstname: this.state.firstname,
-                    lastname: this.state.lastname,
-                    birthdate: this.state.birthdate,
-                    password: this.state.password,
-                    username: this.state.username
-                })
-            })
-            .catch(err => {//error during 2nd fetch
-                if (err.message.match(/Failed to fetch/)) {
-                    alert("The server cannot be reached. Did you start it?");
-                /**} else if(existingUser.username == null) {
-                    alert("User not existing. You should register first");*/
+                    //alert("Got to second fetch");
+                    fetch(`${getDomain()}/users`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            firstName: this.state.firstName,
+                            lastName: this.state.lastName,
+                            birthDate: this.state.birthdate,
+                            password: this.state.password,
+                            username: this.state.username
+                        })
+                    })
+                        .then(() => {
+                            this.redirectLogin();
+                        })
+                        .then( () => {
+                            alert("Registration successful. Try logging in with your new user credentials");
+                        })
+                    .catch(err => {//error during 2nd fetch
+                        if (err.message.match(/Failed to fetch/)) {
+                            alert("The server cannot be reached. Did you start it?");
+                        /**} else if(existingUser.username == null) {
+                            alert("User not existing. You should register first");*/
+                        } else {
+                            alert(`Something went wrong during the login: ${err.message}`)
+                            //TODO: catch errors for user already existing
+                            //TODO: redirect to register screen in case of error
+                        }
+                    });
                 } else {
-                    alert(`Something went wrong during the login: ${err.message}`);
+                    alert("User already existing");
                 }
             });
-            this.props.history.push(`/login`);
-            alert("Registration successful. Try logging in with your new user credentials");
-        } else {
-            alert("User already existing");
-        }
     }
 
     render() {
@@ -154,12 +163,39 @@ class Registrator extends React.Component {
                         }}
                         />
                         <Label>Birthdate *</Label>
-                        <InputField
+                        {/* <InputField
                             placeholder="Enter here.."
                             onChange={e => {
                                 this.handleInputChange("birthdate", e.target.value);
                             }}
-                        />
+                        /> */}
+                        <form action="/action_page.php">
+                            <input
+                                type="date"
+                                name="birthdate"
+                                min="1900-01-01"
+                                max="2019-03-13"
+                                onChange={e => {
+                                    this.handleInputChange("birthdate", e.target.value);
+                                }}
+
+                                {...() => {
+                                let dd = this.today.getDate();
+                                let mm = this.today.getMonth();
+                                let yyyy = this.today.getFullYear();
+                                if (dd < 10) {
+                                    dd = '0' + dd;
+                                }
+                                if (mm < 10) {
+                                    mm = '0' + mm;
+                                }
+                                let todayStr = yyyy + '-' + mm + '-' + dd;
+                                document.getElementById("date").setAttribute("max", todayStr);
+                                }}
+
+                            />
+                        </form>
+                        <p/> {/* newline */}
                         <Label>Username *</Label>
                         <InputField
                             placeholder="Enter here.."

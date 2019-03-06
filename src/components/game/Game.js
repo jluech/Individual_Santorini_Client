@@ -59,18 +59,14 @@ class Game extends React.Component {
       });
   }
 
-  redirectUserProfileView() {
-      this.props.history.push("/users/profile");
-  }
+  redirectUserProfileView = (user) => {
+      this.props.history.push(`/users/profile?username=${user.username}`);
+  };
 
   render() {
     return (
       <Container>
-        <h2
-            onClick={() => {
-              this.redirectUserProfileView();
-            }}
-        >Happy Coding! </h2>
+        <h2>Happy Coding! </h2>
         <p>Get all users from secure end point:</p>
         {!this.state.users ? (
           <Spinner />
@@ -81,8 +77,8 @@ class Game extends React.Component {
                 return (
                   <PlayerContainer key={user.id}>
                     <Player user={user}
-                      onClick={() => {
-                        this.redirectUserProfileView();
+                      handleClick={() => {
+                          this.redirectUserProfileView(user);
                       }}
                     />
                   </PlayerContainer>

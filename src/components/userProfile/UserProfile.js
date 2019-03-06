@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
-import { getDomain } from "../../helpers/getDomain";
+//import { getDomain } from "../../helpers/getDomain";
 import User from "../shared/models/User";
 import { withRouter } from "react-router-dom";
 import { Button } from "../../views/design/Button";
+import {getDomain} from "../../helpers/getDomain";
+import {Spinner} from "../../views/design/Spinner";
+import Player from "../game/Game";
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -61,10 +64,11 @@ class UserProfile extends React.Component {
     constructor() {
         super();
         this.state = {
-            firstname: null,
-            lastname: null,
+            firstName: null,
+            lastName: null,
             username: null,
-            password: null
+            password: null,
+            user: null
         };
     }
 
@@ -76,6 +80,16 @@ class UserProfile extends React.Component {
 
     componentDidMount() {}
 
+    getUserData() {
+        fetch(`${getDomain()}/users/username/`+this.state.user.username, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        //TODO: Somehow fetch user data for display in profile
+    }
+
     redirectGame() {
         this.props.history.push(`/game`);
     }
@@ -85,13 +99,22 @@ class UserProfile extends React.Component {
             <BaseContainer>
                 <FormContainer>
                     <Form>
-                        <Label>First Name</Label>
-                        <InputField
-                            placeholder="Enter here.."
-                            onChange={e => {
-                                this.handleInputChange("firstname", e.target.value);
-                            }}
-                        />
+                        {/*{!this.state.user ? (
+                            <Spinner />
+                        ) : (
+                            <User>
+                                {this.state.user.map(user => {
+                                    return (
+                                        <Player user={user}/>
+                                    );
+                                })}
+                            </User>
+                        )}*/
+                        /*this.state.user*/}
+                        <Label>Username</Label>
+                        <p>
+                            text
+                        </p>
                         <Button
                             width="50%"
                             onClick={() => {

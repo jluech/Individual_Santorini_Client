@@ -49,8 +49,8 @@ class AppRouter extends React.Component {
                 )}
             />
             <Route
-                path="/users/profile"
-                exact
+                path={`/users/profile?username=`}
+                //exact
                 render={() => (
                     <UserProfile />
                 )}
