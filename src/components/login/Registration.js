@@ -64,7 +64,7 @@ class Registrator extends React.Component {
             lastName: null,
             username: null,
             password: null,
-            loggedIn: false
+            registered: false
         };
         this.today = new Date();
     }
@@ -102,25 +102,34 @@ class Registrator extends React.Component {
                     alert("This Username is already taken. Please try again with a different Username");
                     window.location.reload();
                 } else {
-                    console.log(`OK: Successfully registered user ${this.state.username}`);
-                    this.setState({loggedIn: true});
+                    console.log(`OK: Successfully registered user ${this.state.username} with:`);
+                    this.setState({registered: true});
+                    return response;
+                }
+            })
+            .then(response => response.json())
+            .then(returnedUser =>  {
+                if(this.state.registered) {
+                    console.log(`FOLLOW-UP: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
+                    console.log(`FOLLOW-UP: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
+                    console.log(`FOLLOW-UP: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
                 }
             })
             .catch(err => {
                 if (err.message.match(/Failed to fetch/)) {
                     alert("The server cannot be reached. Did you start it?");
                 } else {
-                    alert(`Something went wrong during the login: ${err.message}`)
+                    alert(`Something went wrong during the login: ${err.message}`);
                     window.location.reload();
                 }
             })
-            .then(() =>  {
-                if(this.state.loggedIn) {
+            .then(() => {
+                if(this.state.registered) {
                     this.redirectLogin();
                 }
             })
             .then(() => {
-                if(this.state.loggedIn) {
+                if(this.state.registered) {
                     alert("Registration successful. Try logging in with your new user credentials");
                 }
             })
@@ -135,14 +144,14 @@ class Registrator extends React.Component {
                         <InputField
                         placeholder="Enter here.."
                         onChange={e => {
-                            this.handleInputChange("firstname", e.target.value);
+                            this.handleInputChange("firstName", e.target.value);
                         }}
                         />
                         <Label>Last Name</Label>
                         <InputField
                         placeholder="Enter here.."
                         onChange={e => {
-                            this.handleInputChange("lastname", e.target.value);
+                            this.handleInputChange("lastName", e.target.value);
                         }}
                         />
                         <Label>Birthdate *</Label>
@@ -175,7 +184,6 @@ class Registrator extends React.Component {
                                 let todayStr = yyyy + '-' + mm + '-' + dd;
                                 document.getElementById("date").setAttribute("max", todayStr);
                                 }}
-
                             />
                         </form>
                         <p/> {/* newline */}
@@ -203,7 +211,7 @@ class Registrator extends React.Component {
                                 Back to Login
                             </Button>
                             <Button
-                                disabled={!this.state.username || !this.state.password || !this.state.birthdate}
+                                disabled={!this.state.username || !this.state.password }//|| !this.state.birthdate}
                                 width="50%"
                                 onClick={() => {
                                     this.register();
