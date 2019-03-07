@@ -32,6 +32,16 @@ const Form = styled.div`
   transition: opacity 0.5s ease, transform 0.5s ease;
 `;
 
+const Container = styled.div`
+  margin: 6px 0;
+  width: 280px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ffffff26;
+`;
+
 const TextField = styled.div`
   &::placeholder {
     color: rgba(255, 255, 255, 0.2);
@@ -44,23 +54,31 @@ const TextField = styled.div`
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-`
+`;
+
+const Username = styled.div`
+  font-weight: bold;
+  color: #06c4ff;
+  margin-bottom: 10px;
+`;
 
 const FirstName = styled.div`
   font-weight: bold;
   color: #06c4ff;
   margin-right: 5px;
+  margin-bottom: 10px;
 `;
 
 const LastName = styled.div`
   font-weight: bold;
   color: #06c4ff;
-  margin-right: 10px;
+  margin-bottom: 10px;
 `;
 
 const Label = styled.label`
   color: white;
   margin-bottom: 10px;
+  margin-top: 10px;
   text-transform: uppercase;
 `;
 
@@ -73,12 +91,13 @@ const ButtonContainer = styled.div`
 class UserProfile extends React.Component {
     constructor(props) {
         super(props);
-        this.id = this.props.match.params.id;
+        //this.id = this.props.match.params.id;
         this.state = {
             firstName: null,
             lastName: null,
             username: null,
-            loggedInUser: "",
+            isLoggedInUser: "",
+            id: null,
             user: "",
             profileEditable: false
         };
@@ -97,36 +116,49 @@ class UserProfile extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`${getDomain()}/users/${localStorage.getItem("loggedInAsId")}`)
-            //.then(response => response.json())
-            //.then(user => this.setState({loggedInUser: user.username}))
+        fetch(`${getDomain()}/users/${localStorage.getItem("VisitedUserId")}`)
+            .then(response => response.json())
+            .then(user => {
+                //this.user = user.user;
+                console.log(`username: ${user.username}`);
+                this.setState({isLoggedInUser: user.username});
+                this.setState({id: user.id});
+                this.setState({username: user.username});
+                this.setState({firstName: user.firstName});
+                this.setState({lastName: user.lastName});
+            })
+            .then(() => {
+                console.log(`OK: Fetched user data for user ${this.state.isLoggedInUser} with id ${this.state.id}`);
+            })
+        .catch(err => {
+            console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
+            console.log(`Cause: ${err.message}`);
+        });
         /*
-        fetch(`${getDomain()}/users/id/${this.id}`, {
+        let badRequestFlag = false;
+        fetch(`${getDomain()}/users/${this.state.id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
         })
-        */
-            .then(response => response.json())
-            .then(user => {
-                //this.user = user.user;
-                console.log(`username: ${user.username}`);
-                this.setState({loggedInUser: user.username});
-                //this.setState({firstName: user.firstName});
-                //this.setState({lastName: user.lastName});
+            .then(response => {
+                if(response.status === 400) {//400: BAD REQUEST
+                    console.log(`BAD REQUEST: Unable to fetch user data for user ${this.state.username} with id ${this.state.id}`);
+                    badRequestFlag = true;
+                }
             })
-            .then(() => {
-                console.log(`OK: Fetched user data for user ${this.state.loggedInUser}`);
+            .then(response => {
+                if(!badRequestFlag) return response.json()
+            })
+            .then(user => {
+                if(!badRequestFlag) this.setState({user: user})
             })
         .catch(err => {
-            console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
-            alert(`Something went wrong when fetching user data: ${err.message}`);
-        });
-
-        fetch(`${getDomain()}/users/${this.id}`)
-            .then(response => response.json())
-            .then(user => this.setState({user: user}))
+            console.log(`ERROR: Unable to fetch user data for user ${this.state.username} with id ${this.state.id}`);
+            console.log(`ERROR: Cause: ${err.message}`);
+            //alert(`Something went wrong when fetching user data: ${err.message}`);
+        });*/
     }
 
     redirectGame() {
@@ -144,12 +176,18 @@ class UserProfile extends React.Component {
                     <FormContainer>
                         <Form>
                             <Label>Username</Label>
-                            <TextField>{this.state.username}</TextField>
-                            <div>
-                                <Label>Name</Label>
-                                <FirstName>{this.state.firstName}</FirstName>
-                                <LastName>{this.state.lastName}</LastName>
-                            </div>
+                            <Container>
+                                <div>
+                                    <Username>{this.state.username}</Username>
+                                </div>
+                            </Container>
+                            <Label>Name</Label>
+                            <Container>
+                                <div>
+                                    <FirstName>{this.state.firstName}</FirstName>
+                                    <LastName>{this.state.lastName}</LastName>
+                                </div>
+                            </Container>
                             <ButtonContainer>
                                 <Button
                                     width="50%"

@@ -55,8 +55,17 @@ const Redirector = styled(Link)`
 const Player = ({ user }) => {
   return (
     <Container>
-        <Redirector to={`/users/profile/${user.username}`}>
-            <UserName>{user.username}</UserName>
+        <Redirector
+            to={`/users/profile/${user.username}`}
+        >
+            <UserName
+                onClick={ () => {
+                    localStorage.setItem("VisitedUserId", user.id);
+                    console.log(`VisitedUserId: ${localStorage.getItem("VisitedUserId")}`)
+                }}
+            >
+                {user.username}
+            </UserName>
         </Redirector>
         <p>  </p>
         <FirstName>{user.firstName}</FirstName>

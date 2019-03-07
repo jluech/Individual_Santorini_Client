@@ -122,6 +122,7 @@ class Login extends React.Component {
           //alert("username and password identical");
           // store the token into the local storage
           localStorage.setItem("token", user.token);
+          localStorage.setItem("loggedInUserId", user.id);
           // user login successfully worked --> navigate to the route /game in the GameRouter
           this.props.history.push(`/game`);
         } else {
