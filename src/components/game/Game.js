@@ -62,8 +62,8 @@ class Game extends React.Component {
   render() {
     return (
       <Container>
-        <h2>Happy Coding! </h2>
-        <p>Get all users from secure end point:</p>
+        <h2>Current Players</h2>
+        <p>Logged in as: {localStorage.getItem("loggedInUserUsername")}</p>
         {!this.state.users ? (
           <Spinner />
         ) : (

@@ -110,9 +110,9 @@ class Registrator extends React.Component {
             .then(response => response.json())
             .then(returnedUser =>  {
                 if(this.state.registered) {
-                    console.log(`FOLLOW-UP: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
-                    console.log(`FOLLOW-UP: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
-                    console.log(`FOLLOW-UP: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
+                    console.log(`INFO: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
+                    console.log(`INFO: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
+                    console.log(`INFO: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
                 }
             })
             .catch(err => {

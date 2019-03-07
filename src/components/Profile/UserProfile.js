@@ -42,20 +42,6 @@ const Container = styled.div`
   border: 1px solid #ffffff26;
 `;
 
-const TextField = styled.div`
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-`;
-
 const Username = styled.div`
   font-weight: bold;
   color: #06c4ff;
@@ -70,6 +56,12 @@ const FirstName = styled.div`
 `;
 
 const LastName = styled.div`
+  font-weight: bold;
+  color: #06c4ff;
+  margin-bottom: 10px;
+`;
+
+const Birthdate = styled.div`
   font-weight: bold;
   color: #06c4ff;
   margin-bottom: 10px;
@@ -96,69 +88,37 @@ class UserProfile extends React.Component {
             firstName: null,
             lastName: null,
             username: null,
-            isLoggedInUser: "",
+            birthdate: null,
+            isProfileOwner: "",
             id: null,
             user: "",
             profileEditable: false
         };
     }
 
-    handleEditOnClick = () => {
-        this.setState((state) => {
-            return {profileEditable: !state.profileEditable}
-        })
-    };
-
-    handleStateChange(key, value) {
-        // Example: if the key is username, this statement is the equivalent to the following one:
-        // this.setState({'username': value});
-        this.setState({ [key]: value });
-    }
-
     componentDidMount() {
-        fetch(`${getDomain()}/users/${localStorage.getItem("VisitedUserId")}`)
+        fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
             .then(response => response.json())
             .then(user => {
                 //this.user = user.user;
-                console.log(`username: ${user.username}`);
-                this.setState({isLoggedInUser: user.username});
+                console.log(`INFO: username = ${user.username}`);
+                console.log(`INFO: visitedUserID = ${user.id}`);
+                this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
+                //console.log(`INFO: value of isProfileOwner = ${this.state.isProfileOwner}`);
                 this.setState({id: user.id});
                 this.setState({username: user.username});
                 this.setState({firstName: user.firstName});
                 this.setState({lastName: user.lastName});
+                this.setState({birthdate: user.birthdate});
             })
             .then(() => {
-                console.log(`OK: Fetched user data for user ${this.state.isLoggedInUser} with id ${this.state.id}`);
+                console.log(`OK: Fetched user data for user ${this.state.username} with id ${this.state.id}`);
+                console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
         .catch(err => {
             console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
-            console.log(`Cause: ${err.message}`);
+            console.log(`CAUSE: ${err.message}`);
         });
-        /*
-        let badRequestFlag = false;
-        fetch(`${getDomain()}/users/${this.state.id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => {
-                if(response.status === 400) {//400: BAD REQUEST
-                    console.log(`BAD REQUEST: Unable to fetch user data for user ${this.state.username} with id ${this.state.id}`);
-                    badRequestFlag = true;
-                }
-            })
-            .then(response => {
-                if(!badRequestFlag) return response.json()
-            })
-            .then(user => {
-                if(!badRequestFlag) this.setState({user: user})
-            })
-        .catch(err => {
-            console.log(`ERROR: Unable to fetch user data for user ${this.state.username} with id ${this.state.id}`);
-            console.log(`ERROR: Cause: ${err.message}`);
-            //alert(`Something went wrong when fetching user data: ${err.message}`);
-        });*/
     }
 
     redirectGame() {
@@ -168,7 +128,12 @@ class UserProfile extends React.Component {
     render() {
         if (localStorage.getItem("token") == null ) {
             return (
-                <h1> Please log in to see content.</h1>
+                <h1
+                    style={{color:"white"}}
+                    align="center"
+                >
+                    Please log in to see any content!
+                </h1>
             )
         } else {
             return (
@@ -186,6 +151,12 @@ class UserProfile extends React.Component {
                                 <div>
                                     <FirstName>{this.state.firstName}</FirstName>
                                     <LastName>{this.state.lastName}</LastName>
+                                </div>
+                            </Container>
+                            <Label>Birthdate</Label>
+                            <Container>
+                                <div>
+                                    <Birthdate>{this.state.birthdate}</Birthdate>
                                 </div>
                             </Container>
                             <ButtonContainer>

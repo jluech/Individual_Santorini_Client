@@ -123,6 +123,7 @@ class Login extends React.Component {
           // store the token into the local storage
           localStorage.setItem("token", user.token);
           localStorage.setItem("loggedInUserId", user.id);
+          localStorage.setItem("loggedInUserUsername", user.username);
           // user login successfully worked --> navigate to the route /game in the GameRouter
           this.props.history.push(`/game`);
         } else {
@@ -132,8 +133,12 @@ class Login extends React.Component {
       .catch(err => {
         if (err.message.match(/Failed to fetch/)) {
           alert("The server cannot be reached. Did you start it?");
+          console.log(`ERROR: Server cannot be reached. Did you start it?`)
+          console.log(`CAUSE: ${err.message}`)
         } else {
-          alert(`Something went wrong during the login: ${err.message}`);
+          //alert(`Something went wrong during the login: ${err.message}`);
+          console.log(`ERROR: Something went wrong during login for user ${this.state.username}`)
+          console.log(`CAUSE: ${err.message}`)
         }
       });
   }

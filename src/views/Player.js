@@ -54,25 +54,24 @@ const Redirector = styled(Link)`
  */
 const Player = ({ user }) => {
   return (
-    <Container>
-        <Redirector
-            to={`/users/profile/${user.username}`}
-        >
-            <UserName
-                onClick={ () => {
-                    localStorage.setItem("VisitedUserId", user.id);
-                    console.log(`VisitedUserId: ${localStorage.getItem("VisitedUserId")}`)
-                }}
-            >
-                {user.username}
-            </UserName>
-        </Redirector>
-        <p>  </p>
-        <FirstName>{user.firstName}</FirstName>
-        <LastName>{user.lastName}</LastName>
-        <Id>Id: {user.id}</Id>
-    </Container>
-  );
+      <Container>
+          <Redirector
+              to={`/users/profile/${user.username}`}
+          >
+              <UserName
+                  onClick={() => {
+                      localStorage.setItem("visitedUserId", user.id);
+                      console.log(`visitedUserId: ${localStorage.getItem("visitedUserId")}`)
+                  }}
+              >
+                  {user.username}
+              </UserName>
+          </Redirector>
+          <FirstName>{user.firstName}</FirstName>
+          <LastName>{user.lastName}</LastName>
+          <Id>Id: {user.id}</Id>
+      </Container>
+  )
 };
 
 export default Player;
