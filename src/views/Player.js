@@ -56,7 +56,7 @@ const Player = ({ user }) => {
   return (
       <Container>
           <Redirector
-              to={`/users/profile/${user.username}`}
+              to={`/users/profile/&_${user.username}`}
           >
               <UserName
                   onClick={() => {

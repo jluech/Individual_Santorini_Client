@@ -80,7 +80,7 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
-class UserProfile extends React.Component {
+class UserProfileEditor extends React.Component {
     constructor(props) {
         super(props);
         //this.id = this.props.match.params.id;
@@ -115,18 +115,14 @@ class UserProfile extends React.Component {
                 console.log(`OK: Fetched user data for user ${this.state.username} with id ${this.state.id}`);
                 console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
-        .catch(err => {
-            console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
-            console.log(`CAUSE: ${err.message}`);
-        });
+            .catch(err => {
+                console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
+                console.log(`CAUSE: ${err.message}`);
+            });
     }
 
-    redirectGame() {
-        this.props.history.push(`/game`);
-    }
-
-    redirectEditProfile() {
-        this.props.history.push(`/users/profile/editor/&_${this.state.username}`);
+    redirectProfile() {
+        this.props.history.push(`/users/profile/&_${this.state.username}`);
     }
 
     render() {
@@ -144,6 +140,8 @@ class UserProfile extends React.Component {
                 <BaseContainer>
                     <FormContainer>
                         <Form>
+                            <Label>Currently in Edit Profile</Label>
+
                             <Label>Username</Label>
                             <Container>
                                 <div>
@@ -168,21 +166,11 @@ class UserProfile extends React.Component {
                                     <Button
                                         width="50%"
                                         onClick={() => {
-                                            return this.redirectGame();
+                                            return this.redirectProfile();
                                         }}
                                     >
-                                        Back to Dashboard
+                                        Back to Profile
                                     </Button>
-                                    {this.state.isProfileOwner ?
-                                        <Button
-                                            width="50%"
-                                            onClick={() => {
-                                                return this.redirectEditProfile();
-                                            }}
-                                        >
-                                            Edit Profile
-                                        </Button> : ""
-                                    }
                                 </ButtonContainer>
                             </div>
                         </Form>
@@ -193,5 +181,4 @@ class UserProfile extends React.Component {
     }
 }
 
-//export default withRouter(UserProfile);
-export default UserProfile;
+export default UserProfileEditor;

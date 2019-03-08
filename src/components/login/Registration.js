@@ -93,7 +93,8 @@ class Registrator extends React.Component {
                 lastName: this.state.lastName,
                 birthdate: this.state.birthdate,
                 password: this.state.password,
-                username: this.state.username
+                username: this.state.username,
+                creationDate: this.today
             })
         })
             .then(response => {
@@ -155,12 +156,9 @@ class Registrator extends React.Component {
                         }}
                         />
                         <Label>Birthdate *</Label>
-                        {/* <InputField
-                            placeholder="Enter here.."
-                            onChange={e => {
-                                this.handleInputChange("birthdate", e.target.value);
-                            }}
-                        /> */}
+                        {/*
+                        //TODO: Add max date to birthdate
+                        */}
                         <form action="/action_page.php">
                             <input
                                 type="date"
@@ -210,6 +208,7 @@ class Registrator extends React.Component {
                             >
                                 Back to Login
                             </Button>
+                            {/*TODO: Set birthdate required again */}
                             <Button
                                 disabled={!this.state.username || !this.state.password }//|| !this.state.birthdate}
                                 width="50%"
