@@ -60,8 +60,8 @@ const Player = ({ user }) => {
           >
               <UserName
                   onClick={() => {
-                      localStorage.setItem("visitedUserId", user.id);
-                      console.log(`visitedUserId: ${localStorage.getItem("visitedUserId")}`)
+                      //localStorage.setItem("visitedUserId", user.id);
+                      //console.log(`visitedUserId: ${localStorage.getItem("visitedUserId")}`)
                   }}
               >
                   {user.username}

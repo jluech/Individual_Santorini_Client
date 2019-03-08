@@ -22,7 +22,7 @@ const Form = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 60%;
-  height: 550px;
+  height: 650px;
   font-size: 16px;
   font-weight: 300;
   padding-left: 37px;
@@ -85,24 +85,27 @@ class UserProfile extends React.Component {
         super(props);
         //this.id = this.props.match.params.id;
         this.state = {
-            firstName: null,
-            lastName: null,
-            username: null,
-            birthdate: null,
+            firstName: "",
+            lastName: "",
+            username: "",
+            birthdate: "",
+            creationdate: "",
+            onlineStatus: null,
             isProfileOwner: false,
             id: null,
-            user: "",
+            //user: null,
             profileEditable: false
         };
     }
 
     componentDidMount() {
-        fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
+        //alert(`${window.location.pathname.substr(window.location.pathname.lastIndexOf('_')+1)}`);//extracts username out of path
+        fetch(`${getDomain()}/users/username/${window.location.pathname.substr(window.location.pathname.lastIndexOf('_')+1)}`)
             .then(response => response.json())
             .then(user => {
-                //this.user = user.user;
                 console.log(`INFO: username = ${user.username}`);
-                console.log(`INFO: visitedUserID = ${user.id}`);
+                localStorage.setItem("visitedUserId", user.id);
+                console.log(`INFO: visitedUserID = ${localStorage.getItem("visitedUserId")}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
                 //console.log(`INFO: value of isProfileOwner = ${this.state.isProfileOwner}`);
                 this.setState({id: user.id});
@@ -110,6 +113,8 @@ class UserProfile extends React.Component {
                 this.setState({firstName: user.firstName});
                 this.setState({lastName: user.lastName});
                 this.setState({birthdate: user.birthdateStr});
+                this.setState({creationdate: user.creationDateStr});
+                this.setState({onlineStatus: user.status})
             })
             .then(() => {
                 console.log(`OK: Fetched user data for user ${this.state.username} with id ${this.state.id}`);
@@ -161,6 +166,18 @@ class UserProfile extends React.Component {
                             <Container>
                                 <div>
                                     <Birthdate>{this.state.birthdate}</Birthdate>
+                                </div>
+                            </Container>
+                            <Label>Creation Date</Label>
+                            <Container>
+                                <div>
+                                    <Birthdate>{this.state.creationdate}</Birthdate>
+                                </div>
+                            </Container>
+                            <Label>Online Status</Label>
+                            <Container>
+                                <div>
+                                    <Birthdate>{this.state.onlineStatus}</Birthdate>
                                 </div>
                             </Container>
                             <div>

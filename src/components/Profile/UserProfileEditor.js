@@ -34,12 +34,26 @@ const Form = styled.div`
 
 const Container = styled.div`
   margin: 6px 0;
-  width: 280px;
+  width: 220px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   border: 1px solid #ffffff26;
+`;
+
+const InputField = styled.input`
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+  }
+  height: 35px;
+  padding-left: 15px;
+  margin-left: -4px;
+  border: none;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
 `;
 
 const Username = styled.div`
@@ -121,6 +135,14 @@ class UserProfileEditor extends React.Component {
             });
     }
 
+    handleInputChange(key, value) {
+        this.setState({ [key]: value });
+    }
+
+    updateUserData() {
+        //TODO: implement fetch PUT edit user
+    }
+
     redirectProfile() {
         this.props.history.push(`/users/profile/&_${this.state.username}`);
     }
@@ -143,17 +165,29 @@ class UserProfileEditor extends React.Component {
                             <Label>Currently in Edit Profile</Label>
 
                             <Label>Username</Label>
-                            <Container>
-                                <div>
-                                    <Username>{this.state.username}</Username>
-                                </div>
-                            </Container>
+                            <div>
+                                {/*<Username>{this.state.username}</Username>*/}
+                                <InputField
+                                    placeholder={this.state.username}
+                                    onChange={e => {
+                                        this.handleInputChange("password", e.target.value);
+                                    }}
+                                />
+                            </div>
                             <Label>Name</Label>
                             <Container>
-                                <div>
-                                    <FirstName>{this.state.firstName}</FirstName>
-                                    <LastName>{this.state.lastName}</LastName>
-                                </div>
+                                <InputField
+                                    placeholder={this.state.username}
+                                    onChange={e => {
+                                        this.handleInputChange("password", e.target.value);
+                                    }}
+                                />
+                                <InputField
+                                    placeholder={this.state.username}
+                                    onChange={e => {
+                                        this.handleInputChange("password", e.target.value);
+                                    }}
+                                />
                             </Container>
                             <Label>Birthdate</Label>
                             <Container>
@@ -169,7 +203,16 @@ class UserProfileEditor extends React.Component {
                                             return this.redirectProfile();
                                         }}
                                     >
-                                        Back to Profile
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        width="50%"
+                                        onClick={() => {
+                                            this.updateUserData();
+                                            return this.redirectProfile();
+                                        }}
+                                    >
+                                        Save Changes
                                     </Button>
                                 </ButtonContainer>
                             </div>

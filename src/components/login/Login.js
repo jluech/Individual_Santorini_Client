@@ -119,7 +119,8 @@ class Login extends React.Component {
         const user = new User(returnedUser);
         if(!(user.username === null || user.username === undefined || user.password === null || user.password === undefined) && //existing user
             (user.username === this.state.username && user.password === this.state.password)) {//identical login credentials
-          //alert("username and password identical");
+            //TODO: refactor password checking to BE
+            //TODO: refactor fetch to PUT fetch sending login status = ONLINE
           // store the token into the local storage
           localStorage.setItem("token", user.token);
           localStorage.setItem("loggedInUserId", user.id);

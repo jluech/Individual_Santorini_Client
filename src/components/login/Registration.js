@@ -219,7 +219,9 @@ class Registrator extends React.Component {
                                 Register
                             </Button>
                         </ButtonContainer>
-                        <p>
+                        <p
+                            style={{color:"white"}}
+                        >
                             Fields marked with a * may not be empty.
                         </p>
                     </Form>
