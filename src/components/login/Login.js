@@ -123,8 +123,10 @@ class Login extends React.Component {
             //TODO: refactor fetch to PUT fetch sending login status = ONLINE
           // store the token into the local storage
           localStorage.setItem("token", user.token);
+          //TODO: save token to user in BE
           localStorage.setItem("loggedInUserId", user.id);
           localStorage.setItem("loggedInUserUsername", user.username);
+          console.log(`INFO: Logged in as user ${localStorage.getItem("loggedInUserId")} with token ${localStorage.getItem("token")}`);
           // user login successfully worked --> navigate to the route /game in the GameRouter
           this.props.history.push(`/game`);
         } else {
@@ -175,7 +177,7 @@ class Login extends React.Component {
           <Form>
             <Label>Username</Label>
             <InputField
-              placeholder="Enter here.."
+              placeholder="Enter here..."
               onChange={e => {
                 this.handleInputChange("username", e.target.value);
               }}
@@ -183,7 +185,7 @@ class Login extends React.Component {
             <Label>Password</Label>
             <InputField
                 type="password"
-                placeholder="Enter here.."
+                placeholder="Enter here..."
                 onChange={e => {
                   this.handleInputChange("password", e.target.value);
                 }}

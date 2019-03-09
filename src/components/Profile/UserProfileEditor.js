@@ -1,11 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
-//import { withRouter } from "react-router-dom";
 import { Button } from "../../views/design/Button";
 import {getDomain} from "../../helpers/getDomain"
-//import EditForm from "../components/EditForm"
-// //TODO: write separate EditForm class
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -22,7 +19,7 @@ const Form = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 60%;
-  height: 550px;
+  height: 700px;
   font-size: 16px;
   font-weight: 300;
   padding-left: 37px;
@@ -33,8 +30,19 @@ const Form = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 6px 0;
+  margin: 5px 0;
   width: 220px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ffffff26;
+`;
+
+const LoginContainer = styled.div`
+  margin: 5px 0;
+  width: 550px;
+  height: 270px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
@@ -49,43 +57,27 @@ const InputField = styled.input`
   height: 35px;
   padding-left: 15px;
   margin-left: -4px;
+  margin-right: 10px;
   border: none;
   border-radius: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
 `;
 
-const Username = styled.div`
-  font-weight: bold;
-  color: #06c4ff;
-  margin-bottom: 10px;
-`;
-
-const FirstName = styled.div`
-  font-weight: bold;
-  color: #06c4ff;
-  margin-right: 5px;
-  margin-bottom: 10px;
-`;
-
-const LastName = styled.div`
-  font-weight: bold;
-  color: #06c4ff;
-  margin-bottom: 10px;
-`;
-
-const Birthdate = styled.div`
-  font-weight: bold;
-  color: #06c4ff;
-  margin-bottom: 10px;
-`;
-
 const Label = styled.label`
   color: white;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   margin-top: 10px;
   text-transform: uppercase;
+`;
+
+const InfoText = styled.label`
+  color: dimgray;
+  margin-bottom: 3px;
+  margin-top: 5px;
+  font-size: 5px;
+  flex-direction: column;
 `;
 
 const ButtonContainer = styled.div`
@@ -94,43 +86,55 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
+}
+
 class UserProfileEditor extends React.Component {
     constructor(props) {
         super(props);
-        //this.id = this.props.match.params.id;
         this.state = {
-            firstName: null,
-            lastName: null,
-            username: null,
-            birthdate: null,
-            isProfileOwner: false,
             id: null,
-            user: "",
-            profileEditable: false
+            firstName: "",
+            lastName: "",
+            username: "",
+            password: "",
+            currPw: "",
+            newPw: "",
+            confPw: "",
+            birthdate: null,
+            birthdateStr: null,
+            isProfileOwner: false
         };
+        this.today = new Date();
     }
 
     componentDidMount() {
         fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
             .then(response => response.json())
             .then(user => {
-                //this.user = user.user;
                 console.log(`INFO: username = ${user.username}`);
                 console.log(`INFO: visitedUserID = ${user.id}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
-                //console.log(`INFO: value of isProfileOwner = ${this.state.isProfileOwner}`);
                 this.setState({id: user.id});
                 this.setState({username: user.username});
                 this.setState({firstName: user.firstName});
                 this.setState({lastName: user.lastName});
-                this.setState({birthdate: user.birthdateStr});
+                this.setState({birthdate: user.birthdate});
+                this.setState({birthdateStr: user.birthdateStr});
             })
             .then(() => {
-                console.log(`OK: Fetched user data for user ${this.state.username} with id ${this.state.id}`);
+                console.log(`OK: Fetched user data for profile edit of user ${this.state.username} with id ${this.state.id}`);
                 console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
             .catch(err => {
-                console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
+                console.log(`ERROR: Unable to fetch user data for profile of user ${this.state.username}`);
                 console.log(`CAUSE: ${err.message}`);
             });
     }
@@ -140,11 +144,40 @@ class UserProfileEditor extends React.Component {
     }
 
     updateUserData() {
+        var validUpdate = true;
         //TODO: implement fetch PUT edit user
+        if(validUpdate) {
+            fetch(`${getDomain()}/users/${this.state.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: this.state.id,
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    birthdate: this.state.birthdate,
+                    password: this.state.password,
+                    username: this.state.username
+                })
+            })
+                .then(() => {
+                        return this.redirectProfile(true);
+                    }
+                )
+                .catch(err => {
+                    console.log(`ERROR: Unable to update user data for user ${this.state.username}`);
+                    console.log(`CAUSE: ${err.message}`);
+                })
+        } else {
+            alert("Invalid Update, please review data");
+        }
     }
 
-    redirectProfile() {
+    redirectProfile(waitBoolean) {
+        if(waitBoolean) sleep(2000);
         this.props.history.push(`/users/profile/&_${this.state.username}`);
+        window.location.reload();
     }
 
     render() {
@@ -162,45 +195,104 @@ class UserProfileEditor extends React.Component {
                 <BaseContainer>
                     <FormContainer>
                         <Form>
-                            <Label>Currently in Edit Profile</Label>
-
-                            <Label>Username</Label>
                             <div>
-                                {/*<Username>{this.state.username}</Username>*/}
-                                <InputField
-                                    placeholder={this.state.username}
-                                    onChange={e => {
-                                        this.handleInputChange("password", e.target.value);
-                                    }}
-                                />
+                                <Label>Login Information</Label>
+                                <LoginContainer>
+                                    <div>
+                                        <Label>Username</Label>
+                                        <InputField
+                                            placeholder={this.state.username}
+                                            onChange={e => {
+                                                this.handleInputChange("username", e.target.value);
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>Password</Label>
+                                        <p>Enter current password:</p>
+                                        <InputField
+                                            placeholder="Current password..."
+                                            onChange={e => {
+                                                this.handleInputChange("username", e.target.value);
+                                            }}
+                                        />
+                                        Enter new password:
+                                        <InputField
+                                            placeholder="New password..."
+                                            onChange={e => {
+                                                this.handleInputChange("username", e.target.value);
+                                            }}
+                                        />
+                                        Confirm new password:
+                                        <InputField
+                                            placeholder="Confirm..."
+                                            onChange={e => {
+                                                this.handleInputChange("username", e.target.value);
+                                            }}
+                                        />
+                                    </div>
+                                </LoginContainer>
                             </div>
-                            <Label>Name</Label>
-                            <Container>
-                                <InputField
-                                    placeholder={this.state.username}
-                                    onChange={e => {
-                                        this.handleInputChange("password", e.target.value);
-                                    }}
-                                />
-                                <InputField
-                                    placeholder={this.state.username}
-                                    onChange={e => {
-                                        this.handleInputChange("password", e.target.value);
-                                    }}
-                                />
-                            </Container>
-                            <Label>Birthdate</Label>
-                            <Container>
+                            <div>
+                                <Label>Name</Label>
+                                <Container>
+                                    <div>
+                                        <InputField
+                                            placeholder={this.state.firstName}
+                                            onChange={e => {
+                                                this.handleInputChange("firstName", e.target.value);
+                                            }}
+                                        />
+                                        <InputField
+                                            placeholder={this.state.lastName}
+                                            onChange={e => {
+                                                this.handleInputChange("lastName", e.target.value);
+                                            }}
+                                        />
+                                    </div>
+                                </Container>
+                                <Label>Birthdate</Label>
                                 <div>
-                                    <Birthdate>{this.state.birthdate}</Birthdate>
+                                    <p
+                                        style={{color:"white"}}
+                                    >
+                                        Currently set to:{" "}
+                                        {this.state.birthdateStr}
+                                    </p>
+                                    <form action="/action_page.php">
+                                        <input
+                                            placeholder={this.state.birthdate}
+                                            type="date"
+                                            name="birthdate"
+                                            min="1900-01-01"
+                                            max="2019-03-13"
+                                            onChange={e => {
+                                                this.handleInputChange("birthdate", e.target.value);
+                                            }}
+
+                                            {...() => {
+                                                let dd = this.today.getDate();
+                                                let mm = this.today.getMonth();
+                                                let yyyy = this.today.getFullYear();
+                                                if (dd < 10) {
+                                                    dd = '0' + dd;
+                                                }
+                                                if (mm < 10) {
+                                                    mm = '0' + mm;
+                                                }
+                                                let todayStr = yyyy + '-' + mm + '-' + dd;
+                                                document.getElementById("date").setAttribute("max", todayStr);
+                                            }}
+                                        />
+                                    </form>
                                 </div>
-                            </Container>
+                            </div>
                             <div>
                                 <ButtonContainer>
                                     <Button
                                         width="50%"
                                         onClick={() => {
-                                            return this.redirectProfile();
+                                            return this.redirectProfile(false);
                                         }}
                                     >
                                         Cancel
@@ -208,8 +300,7 @@ class UserProfileEditor extends React.Component {
                                     <Button
                                         width="50%"
                                         onClick={() => {
-                                            this.updateUserData();
-                                            return this.redirectProfile();
+                                            return this.updateUserData();
                                         }}
                                     >
                                         Save Changes

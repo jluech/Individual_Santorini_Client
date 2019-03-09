@@ -99,7 +99,7 @@ class Registrator extends React.Component {
         })
             .then(response => {
                 if(response.status === 409) {
-                    console.log(`ERROR: Failed to register already existing user ${this.state.username} with status 409 CONFLICT`);
+                    console.log(`ERROR: Failed to register already existing user ${this.state.username} with status ${response.status}`);
                     alert("This Username is already taken. Please try again with a different Username");
                     window.location.reload();
                 } else {
@@ -143,14 +143,14 @@ class Registrator extends React.Component {
                     <Form>
                         <Label>First Name</Label>
                         <InputField
-                        placeholder="Enter here.."
+                        placeholder="Enter here..."
                         onChange={e => {
                             this.handleInputChange("firstName", e.target.value);
                         }}
                         />
                         <Label>Last Name</Label>
                         <InputField
-                        placeholder="Enter here.."
+                        placeholder="Enter here..."
                         onChange={e => {
                             this.handleInputChange("lastName", e.target.value);
                         }}
@@ -187,14 +187,14 @@ class Registrator extends React.Component {
                         <p/> {/* newline */}
                         <Label>Username *</Label>
                         <InputField
-                            placeholder="Enter here.."
+                            placeholder="Enter here..."
                             onChange={e => {
                                 this.handleInputChange("username", e.target.value);
                             }}
                         />
                         <Label>Password *</Label>
                         <InputField
-                            placeholder="Enter here.."
+                            placeholder="Enter here..."
                             onChange={e => {
                                 this.handleInputChange("password", e.target.value);
                             }}

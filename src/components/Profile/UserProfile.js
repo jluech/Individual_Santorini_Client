@@ -1,11 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
-//import { withRouter } from "react-router-dom";
 import { Button } from "../../views/design/Button";
 import {getDomain} from "../../helpers/getDomain"
-//import EditForm from "../components/EditForm"
-// //TODO: write separate EditForm class
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -83,7 +80,6 @@ const ButtonContainer = styled.div`
 class UserProfile extends React.Component {
     constructor(props) {
         super(props);
-        //this.id = this.props.match.params.id;
         this.state = {
             firstName: "",
             lastName: "",
@@ -94,7 +90,7 @@ class UserProfile extends React.Component {
             isProfileOwner: false,
             id: null,
             //user: null,
-            profileEditable: false
+            validToken: false
         };
     }
 
@@ -107,7 +103,6 @@ class UserProfile extends React.Component {
                 localStorage.setItem("visitedUserId", user.id);
                 console.log(`INFO: visitedUserID = ${localStorage.getItem("visitedUserId")}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
-                //console.log(`INFO: value of isProfileOwner = ${this.state.isProfileOwner}`);
                 this.setState({id: user.id});
                 this.setState({username: user.username});
                 this.setState({firstName: user.firstName});
@@ -117,13 +112,35 @@ class UserProfile extends React.Component {
                 this.setState({onlineStatus: user.status})
             })
             .then(() => {
-                console.log(`OK: Fetched user data for user ${this.state.username} with id ${this.state.id}`);
+                console.log(`OK: Fetched user data for profile of user ${this.state.username} with id ${this.state.id}`);
                 console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
         .catch(err => {
-            console.log(`ERROR: Unable to fetch user data for user ${this.state.username}`);
+            console.log(`ERROR: Unable to fetch user data for profile of user ${this.state.username}`);
             console.log(`CAUSE: ${err.message}`);
         });
+        this.validateToken();
+    }
+
+    validateToken() {
+        fetch(`${getDomain()}/token/${localStorage.getItem("token")}/${localStorage.getItem("loggedInUserId")}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(result => {
+                if(result.status === 200) {
+                    console.log(`OK: Validating token with status ${result.status}`);
+                    this.setState({validToken: true});
+                } else {
+                    console.log(`ERROR: Validating token with status ${result.status}`);
+                }
+            })
+            .catch(err => {
+                console.log(`ERROR: Unable to validate token for user ${this.state.username}`);
+                console.log(`CAUSE: ${err.message}`);
+            });
     }
 
     redirectGame() {
@@ -135,16 +152,7 @@ class UserProfile extends React.Component {
     }
 
     render() {
-        if (localStorage.getItem("token") == null ) {
-            return (
-                <h1
-                    style={{color:"white"}}
-                    align="center"
-                >
-                    Please log in to see any content!
-                </h1>
-            )
-        } else {
+        if ((localStorage.getItem("token") != null) && (this.state.validToken)) {
             return (
                 <BaseContainer>
                     <FormContainer>
@@ -205,6 +213,15 @@ class UserProfile extends React.Component {
                         </Form>
                     </FormContainer>
                 </BaseContainer>
+            );
+        } else {
+            return (
+                <h1
+                    style={{color:"white"}}
+                    align="center"
+                >
+                    Please log in to see any content!
+                </h1>
             );
         }
     }

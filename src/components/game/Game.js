@@ -34,6 +34,8 @@ class Game extends React.Component {
 
   logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUserId");
+    localStorage.removeItem("visitedUserId");
     this.props.history.push("/login");
     //TODO: add fetch PUT update user for user.status = OFFLINE
   }
