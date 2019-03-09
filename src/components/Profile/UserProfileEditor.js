@@ -30,8 +30,8 @@ const Form = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 5px 0;
-  width: 220px;
+  margin: 10px 0;
+  width: 230px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
@@ -40,8 +40,8 @@ const Container = styled.div`
 `;
 
 const LoginContainer = styled.div`
-  margin: 5px 0;
-  width: 550px;
+  margin: 10px 0;
+  width: 460px;
   height: 270px;
   padding: 10px;
   border-radius: 6px;
@@ -56,8 +56,9 @@ const InputField = styled.input`
   }
   height: 35px;
   padding-left: 15px;
-  margin-left: -4px;
-  margin-right: 10px;
+  //margin-left: -4px;
+  margin-right: 15px;
+  margin-top: 5px;
   border: none;
   border-radius: 20px;
   margin-bottom: 10px;
@@ -67,16 +68,17 @@ const InputField = styled.input`
 
 const Label = styled.label`
   color: white;
-  margin-bottom: 5px;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  margin-right: 100px;
   text-transform: uppercase;
 `;
 
 const InfoText = styled.label`
-  color: dimgray;
-  margin-bottom: 3px;
-  margin-top: 5px;
-  font-size: 5px;
+  color: darkgray;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-size: 15px;
   flex-direction: column;
 `;
 
@@ -200,6 +202,9 @@ class UserProfileEditor extends React.Component {
                                 <LoginContainer>
                                     <div>
                                         <Label>Username</Label>
+                                        <p
+                                            style={{fontSize: 0.1 +"em"}}
+                                        />
                                         <InputField
                                             placeholder={this.state.username}
                                             onChange={e => {
@@ -209,21 +214,30 @@ class UserProfileEditor extends React.Component {
                                     </div>
                                     <div>
                                         <Label>Password</Label>
-                                        <p>Enter current password:</p>
+                                        <p
+                                            style={{fontSize: 0.1 +"em"}}
+                                        />
+                                        <InfoText>Enter current password:</InfoText>
                                         <InputField
-                                            placeholder="Current password..."
+                                            placeholder="Current..."
                                             onChange={e => {
                                                 this.handleInputChange("username", e.target.value);
                                             }}
                                         />
-                                        Enter new password:
+                                        <p
+                                            style={{fontSize: 0.1 +"em"}}
+                                        />
+                                        <InfoText>Enter new password:</InfoText>
                                         <InputField
-                                            placeholder="New password..."
+                                            placeholder="New..."
                                             onChange={e => {
                                                 this.handleInputChange("username", e.target.value);
                                             }}
                                         />
-                                        Confirm new password:
+                                        <p
+                                            style={{fontSize: 0.1 +"em"}}
+                                        />
+                                        <InfoText>Confirm new password:</InfoText>
                                         <InputField
                                             placeholder="Confirm..."
                                             onChange={e => {
@@ -252,40 +266,40 @@ class UserProfileEditor extends React.Component {
                                     </div>
                                 </Container>
                                 <Label>Birthdate</Label>
-                                <div>
-                                    <p
-                                        style={{color:"white"}}
-                                    >
-                                        Currently set to:{" "}
-                                        {this.state.birthdateStr}
-                                    </p>
-                                    <form action="/action_page.php">
-                                        <input
-                                            placeholder={this.state.birthdate}
-                                            type="date"
-                                            name="birthdate"
-                                            min="1900-01-01"
-                                            max="2019-03-13"
-                                            onChange={e => {
-                                                this.handleInputChange("birthdate", e.target.value);
-                                            }}
+                                <Container>
+                                    <div>
+                                        <InfoText>
+                                            Currently set to:{" "}
+                                            {this.state.birthdateStr}
+                                        </InfoText>
+                                        <form action="/action_page.php">
+                                            <input
+                                                placeholder={this.state.birthdate}
+                                                type="date"
+                                                name="birthdate"
+                                                min="1900-01-01"
+                                                max="2019-03-13"
+                                                onChange={e => {
+                                                    this.handleInputChange("birthdate", e.target.value);
+                                                }}
 
-                                            {...() => {
-                                                let dd = this.today.getDate();
-                                                let mm = this.today.getMonth();
-                                                let yyyy = this.today.getFullYear();
-                                                if (dd < 10) {
-                                                    dd = '0' + dd;
-                                                }
-                                                if (mm < 10) {
-                                                    mm = '0' + mm;
-                                                }
-                                                let todayStr = yyyy + '-' + mm + '-' + dd;
-                                                document.getElementById("date").setAttribute("max", todayStr);
-                                            }}
-                                        />
-                                    </form>
-                                </div>
+                                                {...() => {
+                                                    let dd = this.today.getDate();
+                                                    let mm = this.today.getMonth();
+                                                    let yyyy = this.today.getFullYear();
+                                                    if (dd < 10) {
+                                                        dd = '0' + dd;
+                                                    }
+                                                    if (mm < 10) {
+                                                        mm = '0' + mm;
+                                                    }
+                                                    let todayStr = yyyy + '-' + mm + '-' + dd;
+                                                    document.getElementById("date").setAttribute("max", todayStr);
+                                                }}
+                                            />
+                                        </form>
+                                    </div>
+                                </Container>
                             </div>
                             <div>
                                 <ButtonContainer>
