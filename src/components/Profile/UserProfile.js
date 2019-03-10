@@ -109,9 +109,9 @@ class UserProfile extends React.Component {
         fetch(`${getDomain()}/users/username/${window.location.pathname.substr(window.location.pathname.lastIndexOf('_')+1)}`)
             .then(response => response.json())
             .then(user => {
-                console.log(`INFO: username = ${user.username}`);
+                //console.log(`INFO: username = ${user.username}`);
                 localStorage.setItem("visitedUserId", user.id);
-                console.log(`INFO: visitedUserID = ${localStorage.getItem("visitedUserId")}`);
+                //console.log(`INFO: visitedUserID = ${localStorage.getItem("visitedUserId")}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
                 this.setState({id: user.id});
                 this.setState({username: user.username});
@@ -123,7 +123,7 @@ class UserProfile extends React.Component {
             })
             .then(() => {
                 console.log(`OK: Fetched user data for profile of user ${this.state.username} with id ${this.state.id}`);
-                console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
+                //console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
         .catch(err => {
             console.log(`ERROR: Unable to fetch user data for profile of user ${this.state.username}`);
@@ -133,7 +133,7 @@ class UserProfile extends React.Component {
     }
 
     validateToken() {
-        fetch(`${getDomain()}/token/${localStorage.getItem("token")}/${localStorage.getItem("loggedInUserId")}`, {
+        fetch(`${getDomain()}/validate/token/${localStorage.getItem("token")}/${localStorage.getItem("loggedInUserId")}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

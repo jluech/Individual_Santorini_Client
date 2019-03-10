@@ -119,9 +119,12 @@ class UserProfileEditor extends React.Component {
             currPw: "",
             newPw: "",
             confPw: "",
+            newPasswordForFetch: "",
             birthdate: null,
             birthdateStr: null,
-            isProfileOwner: false
+            isProfileOwner: false,
+            hasUpdate: false,
+            validPassword: true
         };
         this.today = new Date();
     }
@@ -130,8 +133,8 @@ class UserProfileEditor extends React.Component {
         fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
             .then(response => response.json())
             .then(user => {
-                console.log(`INFO: username = ${user.username}`);
-                console.log(`INFO: visitedUserID = ${user.id}`);
+                //console.log(`INFO: username = ${user.username}`);
+                //console.log(`INFO: visitedUserID = ${user.id}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
                 this.setState({id: user.id});
                 this.setState({username: user.username});
@@ -142,22 +145,103 @@ class UserProfileEditor extends React.Component {
             })
             .then(() => {
                 console.log(`OK: Fetched user data for profile edit of user ${this.state.username} with id ${this.state.id}`);
-                console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
+                //console.log(`INFO: isProfileOwner = ${this.state.isProfileOwner}`);
             })
             .catch(err => {
                 console.log(`ERROR: Unable to fetch user data for profile of user ${this.state.username}`);
                 console.log(`CAUSE: ${err.message}`);
             });
+
+        console.log(`currPw is ${this.state.currPw}`);
+        console.log(`newPw is ${this.state.newPw}`);
+        console.log(`confPw is ${this.state.confPw}`);
     }
 
     handleInputChange(key, value) {
         this.setState({ [key]: value });
+        this.setState({hasUpdate: true});
+        console.log(`changing ${key} to ${value}`);
+    }
+
+    validatePassword() {
+        fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(result => {
+                if(result.status === 202) {
+                    console.log(`OK: Validating password with status ${result.status}`);
+                    this.setState({validPassword: true});
+                } else {
+                    console.log(`ERROR: Validating password with status ${result.status}`);
+                }
+            })
+            .catch(err => {
+                console.log(`ERROR: Unable to validate password for user ${this.state.username}`);
+                console.log(`CAUSE: ${err.message}`);
+            });
     }
 
     updateUserData() {
-        var validUpdate = true;
+        let validPasswordUpdate = true;
+        let hasError = false;
+
+        console.log(`currPw is now ${this.state.currPw}`);
+        console.log(`newPw is now ${this.state.newPw}`);
+        console.log(`confPw is now ${this.state.confPw}`);
+
+        if((this.state.currPw !== "") || (this.state.newPw !== "") || (this.state.confPw !== "")) { //at least one field changed
+            validPasswordUpdate = false;
+            this.setState({validPassword: false});
+            console.log("pw fields changed");
+
+            if (this.state.currPw !== "") { //validate entry to current password
+                this.validatePassword();
+            }
+
+            if(this.state.newPw === this.state.confPw) { //check for identical password in confirmation
+                validPasswordUpdate = true;
+                console.log("newPw equal confPw");
+                console.log(`newPw before setting: ${this.state.newPw}`);
+                console.log(`FetchPassword before setting: ${this.state.newPasswordForFetch}`);
+                let updatePw = this.state.newPw;
+                console.log(`updatePw is ${updatePw}`);
+                this.setState({newPasswordForFetch: updatePw});
+                //this.handleInputChange("password", updatePw);
+                sleep(500);
+                console.log(`updatePw is ${updatePw}`);
+                console.log(`Password set to ${this.state.newPasswordForFetch} now`);
+            }
+
+            sleep(500);
+            if(validPasswordUpdate && this.state.validPassword) {
+                fetch(`${getDomain()}/users/${this.state.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: this.state.id,
+                        password: this.state.newPasswordForFetch
+                    })
+                })
+                    .then(() => {
+                        console.log(`OK: Updated password for user ${this.state.username}`);
+                    })
+                    .catch(err => {
+                        console.log(`ERROR: Unable to update user data for user ${this.state.username}`);
+                        console.log(`CAUSE: ${err.message}`);
+                    })
+            } else {
+                hasError = true;
+            }
+        }
+
         //TODO: implement fetch PUT edit user
-        if(validUpdate) {
+
+        if(this.state.hasUpdate && !hasError) {
             fetch(`${getDomain()}/users/${this.state.id}`, {
                 method: "PUT",
                 headers: {
@@ -168,14 +252,13 @@ class UserProfileEditor extends React.Component {
                     firstName: this.state.firstName,
                     lastName: this.state.lastName,
                     birthdate: this.state.birthdate,
-                    password: this.state.password,
                     username: this.state.username
                 })
             })
                 .then(() => {
-                        return this.redirectProfile(true);
-                    }
-                )
+                    console.log(`OK: Updated user data for user ${this.state.username}`);
+                    //return this.redirectProfile(true);
+                })
                 .catch(err => {
                     console.log(`ERROR: Unable to update user data for user ${this.state.username}`);
                     console.log(`CAUSE: ${err.message}`);
@@ -186,7 +269,7 @@ class UserProfileEditor extends React.Component {
     }
 
     redirectProfile(waitBoolean) {
-        if(waitBoolean) sleep(2000);
+        if(waitBoolean) sleep(1000);
         this.props.history.push(`/users/profile/&_${this.state.username}`);
         window.location.reload();
     }
@@ -232,7 +315,7 @@ class UserProfileEditor extends React.Component {
                                         <InputField
                                             placeholder="Current..."
                                             onChange={e => {
-                                                this.handleInputChange("username", e.target.value);
+                                                this.handleInputChange("currPw", e.target.value);
                                             }}
                                         />
                                         <p
@@ -242,7 +325,7 @@ class UserProfileEditor extends React.Component {
                                         <InputField
                                             placeholder="New..."
                                             onChange={e => {
-                                                this.handleInputChange("username", e.target.value);
+                                                this.handleInputChange("newPw", e.target.value);
                                             }}
                                         />
                                         <p
@@ -252,7 +335,7 @@ class UserProfileEditor extends React.Component {
                                         <InputField
                                             placeholder="Confirm..."
                                             onChange={e => {
-                                                this.handleInputChange("username", e.target.value);
+                                                this.handleInputChange("confPw", e.target.value);
                                             }}
                                         />
                                     </div>

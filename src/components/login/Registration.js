@@ -103,7 +103,7 @@ class Registrator extends React.Component {
                     alert("This Username is already taken. Please try again with a different Username");
                     window.location.reload();
                 } else {
-                    console.log(`OK: Successfully registered user ${this.state.username} with:`);
+                    console.log(`OK: Successfully registered user ${this.state.username}`);
                     this.setState({registered: true});
                     return response;
                 }
@@ -111,9 +111,9 @@ class Registrator extends React.Component {
             .then(response => response.json())
             .then(returnedUser =>  {
                 if(this.state.registered) {
-                    console.log(`INFO: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
-                    console.log(`INFO: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
-                    console.log(`INFO: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
+                    //console.log(`INFO: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
+                    //console.log(`INFO: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
+                    //console.log(`INFO: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
                 }
             })
             .catch(err => {
