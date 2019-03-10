@@ -41,13 +41,22 @@ const Container = styled.div`
 
 const LoginContainer = styled.div`
   margin: 10px 0;
-  width: 460px;
+  width: 490px;
   height: 270px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   border: 1px solid #ffffff26;
+`;
+
+const ProfileContainer = styled.div`
+  margin: 10px 0;
+  width: 500px;
+  border-radius: 6px;
+  display: flex;
+  align-items: (flex-start) (center);
+  //border: 1px solid #ffffff26;
 `;
 
 const InputField = styled.input`
@@ -200,7 +209,9 @@ class UserProfileEditor extends React.Component {
                             <div>
                                 <Label>Login Information</Label>
                                 <LoginContainer>
-                                    <div>
+                                    <div
+                                        style={{marginRight: 30}}
+                                    >
                                         <Label>Username</Label>
                                         <p
                                             style={{fontSize: 0.1 +"em"}}
@@ -248,58 +259,66 @@ class UserProfileEditor extends React.Component {
                                 </LoginContainer>
                             </div>
                             <div>
-                                <Label>Name</Label>
-                                <Container>
+                                <ProfileContainer>
                                     <div>
-                                        <InputField
-                                            placeholder={this.state.firstName}
-                                            onChange={e => {
-                                                this.handleInputChange("firstName", e.target.value);
-                                            }}
-                                        />
-                                        <InputField
-                                            placeholder={this.state.lastName}
-                                            onChange={e => {
-                                                this.handleInputChange("lastName", e.target.value);
-                                            }}
-                                        />
+                                        <Label>Name</Label>
+                                        <Container>
+                                            <div>
+                                                <InputField
+                                                    placeholder={this.state.firstName}
+                                                    onChange={e => {
+                                                        this.handleInputChange("firstName", e.target.value);
+                                                    }}
+                                                />
+                                                <InputField
+                                                    placeholder={this.state.lastName}
+                                                    onChange={e => {
+                                                        this.handleInputChange("lastName", e.target.value);
+                                                    }}
+                                                />
+                                            </div>
+                                        </Container>
                                     </div>
-                                </Container>
-                                <Label>Birthdate</Label>
-                                <Container>
-                                    <div>
-                                        <InfoText>
-                                            Currently set to:{" "}
-                                            {this.state.birthdateStr}
-                                        </InfoText>
-                                        <form action="/action_page.php">
-                                            <input
-                                                placeholder={this.state.birthdate}
-                                                type="date"
-                                                name="birthdate"
-                                                min="1900-01-01"
-                                                max="2019-03-13"
-                                                onChange={e => {
-                                                    this.handleInputChange("birthdate", e.target.value);
-                                                }}
+                                    <div
+                                        style={{marginLeft: 30}}
+                                    >
+                                        <Label>Birthdate</Label>
+                                        <Container>
+                                            <div>
+                                                <InfoText>
+                                                    Currently set to:{" "}
+                                                    {this.state.birthdateStr}
+                                                </InfoText>
+                                                <form action="/action_page.php">
+                                                    <input
+                                                        placeholder={this.state.birthdate}
+                                                        type="date"
+                                                        name="birthdate"
+                                                        min="1900-01-01"
+                                                        max="2019-03-13"
+                                                        onChange={e => {
+                                                            this.handleInputChange("birthdate", e.target.value);
+                                                        }}
 
-                                                {...() => {
-                                                    let dd = this.today.getDate();
-                                                    let mm = this.today.getMonth();
-                                                    let yyyy = this.today.getFullYear();
-                                                    if (dd < 10) {
-                                                        dd = '0' + dd;
-                                                    }
-                                                    if (mm < 10) {
-                                                        mm = '0' + mm;
-                                                    }
-                                                    let todayStr = yyyy + '-' + mm + '-' + dd;
-                                                    document.getElementById("date").setAttribute("max", todayStr);
-                                                }}
-                                            />
-                                        </form>
+                                                        {...() => {
+                                                            let dd = this.today.getDate();
+                                                            let mm = this.today.getMonth();
+                                                            let yyyy = this.today.getFullYear();
+                                                            if (dd < 10) {
+                                                                dd = '0' + dd;
+                                                            }
+                                                            if (mm < 10) {
+                                                                mm = '0' + mm;
+                                                            }
+                                                            let todayStr = yyyy + '-' + mm + '-' + dd;
+                                                            document.getElementById("date").setAttribute("max", todayStr);
+                                                        }}
+                                                    />
+                                                </form>
+                                            </div>
+                                        </Container>
                                     </div>
-                                </Container>
+                                </ProfileContainer>
                             </div>
                             <div>
                                 <ButtonContainer>

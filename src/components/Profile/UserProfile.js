@@ -30,13 +30,24 @@ const Form = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 6px 0;
-  width: 280px;
+  margin: 20px 0;
+  //margin-right: 10px;
+  width: 200px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   border: 1px solid #ffffff26;
+`;
+
+const ProfileContainer = styled.div`
+  margin: 6px 0;
+  width: 500px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: (flex-start) (center);
+  //border: 1px solid #ffffff26;
 `;
 
 const Username = styled.div`
@@ -66,8 +77,7 @@ const Birthdate = styled.div`
 
 const Label = styled.label`
   color: white;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  margin: 10px;
   text-transform: uppercase;
 `;
 
@@ -157,37 +167,45 @@ class UserProfile extends React.Component {
                 <BaseContainer>
                     <FormContainer>
                         <Form>
-                            <Label>Username</Label>
-                            <Container>
+                            <ProfileContainer>
                                 <div>
-                                    <Username>{this.state.username}</Username>
+                                    <Label>Username</Label>
+                                    <Container>
+                                        <div>
+                                            <Username>{this.state.username}</Username>
+                                        </div>
+                                    </Container>
+                                    <Label>Name</Label>
+                                    <Container>
+                                        <div>
+                                            <FirstName>{this.state.firstName}</FirstName>
+                                            <LastName>{this.state.lastName}</LastName>
+                                        </div>
+                                    </Container>
+                                    <Label>Birthdate</Label>
+                                    <Container>
+                                        <div>
+                                            <Birthdate>{this.state.birthdate}</Birthdate>
+                                        </div>
+                                    </Container>
                                 </div>
-                            </Container>
-                            <Label>Name</Label>
-                            <Container>
-                                <div>
-                                    <FirstName>{this.state.firstName}</FirstName>
-                                    <LastName>{this.state.lastName}</LastName>
+                                <div
+                                    style={{marginLeft: 70}}
+                                >
+                                    <Label>Creation Date</Label>
+                                    <Container>
+                                        <div>
+                                            <Birthdate>{this.state.creationdate}</Birthdate>
+                                        </div>
+                                    </Container>
+                                    <Label>Online Status</Label>
+                                    <Container>
+                                        <div>
+                                            <Birthdate>{this.state.onlineStatus}</Birthdate>
+                                        </div>
+                                    </Container>
                                 </div>
-                            </Container>
-                            <Label>Birthdate</Label>
-                            <Container>
-                                <div>
-                                    <Birthdate>{this.state.birthdate}</Birthdate>
-                                </div>
-                            </Container>
-                            <Label>Creation Date</Label>
-                            <Container>
-                                <div>
-                                    <Birthdate>{this.state.creationdate}</Birthdate>
-                                </div>
-                            </Container>
-                            <Label>Online Status</Label>
-                            <Container>
-                                <div>
-                                    <Birthdate>{this.state.onlineStatus}</Birthdate>
-                                </div>
-                            </Container>
+                            </ProfileContainer>
                             <div>
                                 <ButtonContainer>
                                     <Button

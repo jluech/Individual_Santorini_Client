@@ -129,6 +129,7 @@ class Login extends React.Component {
           console.log(`INFO: Logged in as user ${localStorage.getItem("loggedInUserId")} with token ${localStorage.getItem("token")}`);
           // user login successfully worked --> navigate to the route /game in the GameRouter
           this.props.history.push(`/game`);
+          //TODO: add fetch PUT for user update user.status = ONLINE and remove in BE in createUser
         } else {
           alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
         }
@@ -136,8 +137,8 @@ class Login extends React.Component {
       .catch(err => {
         if (err.message.match(/Failed to fetch/)) {
           alert("The server cannot be reached. Did you start it?");
-          console.log(`ERROR: Server cannot be reached. Did you start it?`)
-          console.log(`CAUSE: ${err.message}`)
+          console.log(`ERROR: Server cannot be reached. Did you start it?`);
+          console.log(`CAUSE: ${err.message}`);
         } else {
           //alert(`Something went wrong during the login: ${err.message}`);
           console.log(`ERROR: Something went wrong during login for user ${this.state.username}`)
