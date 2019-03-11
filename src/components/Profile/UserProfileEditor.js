@@ -119,12 +119,14 @@ class UserProfileEditor extends React.Component {
             currPw: "",
             newPw: "",
             confPw: "",
-            newPasswordForFetch: "",
             birthdate: null,
-            birthdateStr: null,
-            isProfileOwner: false,
-            hasUpdate: false,
-            validPassword: true
+            birthdateStr: "",
+            oldFirstName: "",
+            oldLastName: "",
+            oldUsername: "",
+            oldBirthdate: null,
+            oldBirthdateStr: "",
+            isProfileOwner: false
         };
         this.today = new Date();
     }
@@ -138,10 +140,15 @@ class UserProfileEditor extends React.Component {
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
                 this.setState({id: user.id});
                 this.setState({username: user.username});
+                this.setState({oldUsername: user.username});
                 this.setState({firstName: user.firstName});
+                this.setState({oldFirstName: user.firstName});
                 this.setState({lastName: user.lastName});
+                this.setState({oldLastName: user.lastName});
                 this.setState({birthdate: user.birthdate});
+                this.setState({oldBirthdate: user.birthdate});
                 this.setState({birthdateStr: user.birthdateStr});
+                //this.setState({oldBirthdateStr: user.birthdateStr});
             })
             .then(() => {
                 console.log(`OK: Fetched user data for profile edit of user ${this.state.username} with id ${this.state.id}`);
@@ -151,98 +158,43 @@ class UserProfileEditor extends React.Component {
                 console.log(`ERROR: Unable to fetch user data for profile of user ${this.state.username}`);
                 console.log(`CAUSE: ${err.message}`);
             });
-
-        console.log(`currPw is ${this.state.currPw}`);
-        console.log(`newPw is ${this.state.newPw}`);
-        console.log(`confPw is ${this.state.confPw}`);
     }
 
     handleInputChange(key, value) {
         this.setState({ [key]: value });
-        this.setState({hasUpdate: true});
         console.log(`changing ${key} to ${value}`);
     }
 
-    validatePassword() {
-        fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(result => {
-                if(result.status === 202) {
-                    console.log(`OK: Validating password with status ${result.status}`);
-                    this.setState({validPassword: true});
-                } else {
-                    console.log(`ERROR: Validating password with status ${result.status}`);
-                }
-            })
-            .catch(err => {
-                console.log(`ERROR: Unable to validate password for user ${this.state.username}`);
-                console.log(`CAUSE: ${err.message}`);
-            });
-    }
-
     updateUserData() {
-        let validPasswordUpdate = true;
-        let hasError = false;
-
-        console.log(`currPw is now ${this.state.currPw}`);
-        console.log(`newPw is now ${this.state.newPw}`);
-        console.log(`confPw is now ${this.state.confPw}`);
-
-        if((this.state.currPw !== "") || (this.state.newPw !== "") || (this.state.confPw !== "")) { //at least one field changed
-            validPasswordUpdate = false;
-            this.setState({validPassword: false});
-            console.log("pw fields changed");
-
-            if (this.state.currPw !== "") { //validate entry to current password
-                this.validatePassword();
-            }
-
-            if(this.state.newPw === this.state.confPw) { //check for identical password in confirmation
-                validPasswordUpdate = true;
-                console.log("newPw equal confPw");
-                console.log(`newPw before setting: ${this.state.newPw}`);
-                console.log(`FetchPassword before setting: ${this.state.newPasswordForFetch}`);
-                let updatePw = this.state.newPw;
-                console.log(`updatePw is ${updatePw}`);
-                this.setState({newPasswordForFetch: updatePw});
-                //this.handleInputChange("password", updatePw);
-                sleep(500);
-                console.log(`updatePw is ${updatePw}`);
-                console.log(`Password set to ${this.state.newPasswordForFetch} now`);
-            }
-
-            sleep(500);
-            if(validPasswordUpdate && this.state.validPassword) {
-                fetch(`${getDomain()}/users/${this.state.id}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        id: this.state.id,
-                        password: this.state.newPasswordForFetch
-                    })
-                })
-                    .then(() => {
-                        console.log(`OK: Updated password for user ${this.state.username}`);
-                    })
-                    .catch(err => {
-                        console.log(`ERROR: Unable to update user data for user ${this.state.username}`);
-                        console.log(`CAUSE: ${err.message}`);
-                    })
+        var hasDataUpdate = false;
+        var hasPwUpdate = false;
+        if((this.state.firstName !== this.state.oldFirstName)
+            || (this.state.lastName !== this.state.oldLastName)
+            || (this.state.username !== this.state.oldUsername)
+            || (this.state.birthdate !== this.state.oldBirthdate)
+        ) {
+            hasDataUpdate = true;
+        }
+        if((this.state.currPw !== "")
+            || (this.state.newPw !== "")
+            || (this.state.confPw !== "") //new password data entered
+        ) {
+            if(this.state.currPw !== "") {
+                if ((this.state.newPw !== "") && (this.state.newPw === this.state.confPw)) { //new password confirmed
+                    hasPwUpdate = true;
+                } else {
+                    alert("Invalid password confirmation. Please fix your new password");
+                }
             } else {
-                hasError = true;
+                alert("Empty current password!");
             }
         }
 
-        //TODO: implement fetch PUT edit user
-
-        if(this.state.hasUpdate && !hasError) {
-            fetch(`${getDomain()}/users/${this.state.id}`, {
+        if(hasDataUpdate && hasPwUpdate) {
+            console.log("Has Data Update and Password Update");
+            let updatedData = false;
+            let updatedPassword = false;
+            fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user data
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -251,20 +203,144 @@ class UserProfileEditor extends React.Component {
                     id: this.state.id,
                     firstName: this.state.firstName,
                     lastName: this.state.lastName,
-                    birthdate: this.state.birthdate,
-                    username: this.state.username
+                    username: this.state.username,
+                    birthdate: this.state.birthdate
                 })
             })
-                .then(() => {
-                    console.log(`OK: Updated user data for user ${this.state.username}`);
-                    //return this.redirectProfile(true);
+                .then(response => {
+                    if(response.status === 202) {
+                        console.log(`OK: Successfully updated data for user ${this.state.username}`);
+                        alert(`Successfully updated data for user ${this.state.username}`);
+                        updatedData = true;
+                        if(updatedData && updatedPassword) {
+                            this.redirectProfile();
+                        }
+                    } else {
+                        console.log(`ERROR: Could not update data with status ${response.status}`)
+                    }
                 })
                 .catch(err => {
-                    console.log(`ERROR: Unable to update user data for user ${this.state.username}`);
+                    console.log(`ERROR: Something went wrong during data update for user ${this.state.username}`);
+                    console.log(`CAUSE: ${err.message}`);
+                });
+
+            fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(result => {
+                    if(result.status === 202) {
+                        console.log(`OK: Validated password with status ${result.status}`);
+
+                        fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user password
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                id: this.state.id,
+                                password: this.state.newPw
+                            })
+                        })
+                            .then(response => {
+                                if(response.status === 202) {
+                                    console.log(`OK: Successfully updated password for user ${this.state.username}`);
+                                    alert(`Successfully updated password for user ${this.state.username}`);
+                                    updatedPassword = true;
+                                    if(updatedData && updatedPassword) {
+                                        this.redirectProfile();
+                                    }
+                                } else {
+                                    console.log(`ERROR: Could not update password with status ${response.status}`);
+                                }
+                            })
+                            .catch(err => {
+                                console.log(`ERROR: Something went wrong during password update for user ${this.state.username}`);
+                                console.log(`CAUSE: ${err.message}`);
+                            })
+                    } else {
+                        console.log(`ERROR: Validating password with status ${result.status}`);
+                    }
+                })
+                .catch(err => {
+                    console.log(`ERROR: Unable to validate password for user ${this.state.username}`);
+                    console.log(`CAUSE: ${err.message}`);
+                });
+        } else if(hasDataUpdate && !hasPwUpdate) {
+            console.log("Has Data Update");
+            fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user data
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: this.state.id,
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    username: this.state.username,
+                    birthdate: this.state.birthdate
+                })
+            })
+                .then(response => {
+                    if(response.status === 202) {
+                        console.log(`OK: Successfully updated data for user ${this.state.username}`);
+                        this.redirectProfile();
+                    } else {
+                        console.log(`ERROR: Could not update data with status ${response.status}`)
+                    }
+                })
+                .catch(err => {
+                    console.log(`ERROR: Something went wrong during data update for user ${this.state.username}`);
                     console.log(`CAUSE: ${err.message}`);
                 })
+        } else if(!hasDataUpdate && hasPwUpdate) {
+            console.log("Has Password Update");
+            fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(result => {
+                    if(result.status === 202) {
+                        console.log(`OK: Validated password with status ${result.status}`);
+
+                        fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user password
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                id: this.state.id,
+                                password: this.state.newPw
+                            })
+                        })
+                            .then(response => {
+                                if(response.status === 202) {
+                                    console.log(`OK: Successfully updated password for user ${this.state.username}`);
+                                    this.redirectProfile();
+                                } else {
+                                    console.log(`ERROR: Could not update password with status ${response.status}`)
+                                }
+                            })
+                            .catch(err => {
+                                console.log(`ERROR: Something went wrong during password update for user ${this.state.username}`);
+                                console.log(`CAUSE: ${err.message}`);
+                            })
+                    } else {
+                        console.log(`ERROR: Validating password with status ${result.status}`);
+                    }
+                })
+                .catch(err => {
+                    console.log(`ERROR: Unable to validate password for user ${this.state.username}`);
+                    console.log(`CAUSE: ${err.message}`);
+                });
         } else {
-            alert("Invalid Update, please review data");
+            alert("No valid update detected! Please revisit data entry");
+            console.log("ERROR: No valid update for user detected");
+            window.location.reload();
         }
     }
 
