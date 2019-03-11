@@ -131,7 +131,6 @@ class Login extends React.Component {
                 .then(response => {
                   if (response.status === 202) {
                     console.log(`OK: Validating password with status ${response.status}`);
-                    console.log(`validated to true`);
 
                     // store the token into the local storage
                     localStorage.setItem("token", user.token);

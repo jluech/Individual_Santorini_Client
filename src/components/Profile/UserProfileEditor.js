@@ -162,7 +162,7 @@ class UserProfileEditor extends React.Component {
 
     handleInputChange(key, value) {
         this.setState({ [key]: value });
-        console.log(`changing ${key} to ${value}`);
+        //console.log(`changing ${key} to ${value}`);
     }
 
     updateUserData() {
@@ -191,7 +191,7 @@ class UserProfileEditor extends React.Component {
         }
 
         if(hasDataUpdate && hasPwUpdate) {
-            console.log("Has Data Update and Password Update");
+            //console.log("Has Data Update and Password Update");
             let updatedData = false;
             let updatedPassword = false;
             fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user data
@@ -269,7 +269,7 @@ class UserProfileEditor extends React.Component {
                     console.log(`CAUSE: ${err.message}`);
                 });
         } else if(hasDataUpdate && !hasPwUpdate) {
-            console.log("Has Data Update");
+            //console.log("Has Data Update");
             fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user data
                 method: "PUT",
                 headers: {
@@ -296,7 +296,7 @@ class UserProfileEditor extends React.Component {
                     console.log(`CAUSE: ${err.message}`);
                 })
         } else if(!hasDataUpdate && hasPwUpdate) {
-            console.log("Has Password Update");
+            //console.log("Has Password Update");
             fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
                 method: "GET",
                 headers: {
@@ -344,10 +344,10 @@ class UserProfileEditor extends React.Component {
         }
     }
 
-    redirectProfile(waitBoolean) {
-        if(waitBoolean) sleep(1000);
+    redirectProfile(editBoolean) {
+        if(editBoolean) sleep(500);
         this.props.history.push(`/users/profile/&_${this.state.username}`);
-        window.location.reload();
+        if(editBoolean) window.location.reload();
     }
 
     render() {
