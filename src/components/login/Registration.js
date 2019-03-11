@@ -98,14 +98,14 @@ class Registrator extends React.Component {
             })
         })
             .then(response => {
-                if(response.status === 409) {
-                    console.log(`ERROR: Failed to register already existing user ${this.state.username} with status ${response.status}`);
-                    alert("This Username is already taken. Please try again with a different Username");
-                    window.location.reload();
-                } else {
+                if(response.status === 201) {
                     console.log(`OK: Successfully registered user ${this.state.username}`);
                     this.setState({registered: true});
                     return response;
+                } else {
+                    console.log(`ERROR: Failed to register user ${this.state.username} with status ${response.status}`);
+                    alert("This Username is already taken. Please try again with a different Username");
+                    window.location.reload();
                 }
             })
             /*.then(response => response.json())
