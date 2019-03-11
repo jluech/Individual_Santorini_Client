@@ -108,14 +108,14 @@ class Registrator extends React.Component {
                     return response;
                 }
             })
-            .then(response => response.json())
+            /*.then(response => response.json())
             .then(returnedUser =>  {
                 if(this.state.registered) {
                     //console.log(`INFO: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
                     //console.log(`INFO: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
                     //console.log(`INFO: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
                 }
-            })
+            })*/
             .catch(err => {
                 if (err.message.match(/Failed to fetch/)) {
                     alert("The server cannot be reached. Did you start it?");

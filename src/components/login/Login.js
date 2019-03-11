@@ -100,9 +100,11 @@ class Login extends React.Component {
     super();
     this.state = {
       username: null,
-      password: null
+      password: null,
+      validPassword: false
     };
   }
+
   /**
    * HTTP POST request is sent to the backend.
    * If the request is successful, a new user is returned to the front-end and its token is stored in the localStorage.
@@ -117,21 +119,56 @@ class Login extends React.Component {
       .then(response => response.json())
       .then(returnedUser => {
         const user = new User(returnedUser);
-        if(!(user.username === null || user.username === undefined || user.password === null || user.password === undefined) && //existing user
-            (user.username === this.state.username && user.password === this.state.password)) {//identical login credentials
-            //TODO: refactor password checking to BE
-            //TODO: refactor fetch to PUT fetch sending login status = ONLINE
-          // store the token into the local storage
-          localStorage.setItem("token", user.token);
-          //TODO: save token to user in BE
-          localStorage.setItem("loggedInUserId", user.id);
-          localStorage.setItem("loggedInUserUsername", user.username);
-          console.log(`INFO: Logged in as user ${localStorage.getItem("loggedInUserId")} with token ${localStorage.getItem("token")}`);
-          // user login successfully worked --> navigate to the route /game in the GameRouter
-          this.props.history.push(`/game`);
-          //TODO: add fetch PUT for user update user.status = ONLINE and remove in BE in createUser
+
+        if(!(this.state.username === null || this.state.username === "" || this.state.password === null || this.state.password === "")) {//valid data entry
+          if (!(user.username === null || user.username === undefined || user.password === null || user.password === undefined)) {//existing user
+            fetch(`${getDomain()}/validate/password/${this.state.password}/${user.id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json"
+              }
+            })
+                .then(response => {
+                  if (response.status === 202) {
+                    console.log(`OK: Validating password with status ${response.status}`);
+                    console.log(`validated to true`);
+
+                    // store the token into the local storage
+                    localStorage.setItem("token", user.token);
+                    localStorage.setItem("loggedInUserId", user.id);
+                    localStorage.setItem("loggedInUserUsername", user.username);
+                    console.log(`INFO: Logged in as user ${localStorage.getItem("loggedInUserId")} with token ${localStorage.getItem("token")}`);
+
+                    fetch(`${getDomain()}/users/login/${this.state.username}`, {//setting online status to ONLINE
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": "application/json"
+                      }
+                    })
+                        .then(() => {
+                          // user login successfully worked --> navigate to the route /game in the GameRouter
+                          this.props.history.push(`/game`);
+                        })
+                        .catch(err => {
+                          console.log(`ERROR: Unable to set status for user ${this.state.username}`);
+                          console.log(`CAUSE: ${err.message}`);
+                        });
+                  } else {
+                    alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
+                    console.log(`ERROR: Validating password with status ${response.status}`);
+                  }
+                })
+                .catch(err => {
+                  console.log(`ERROR: Unable to validate password for user ${this.state.username}`);
+                  console.log(`CAUSE: ${err.message}`);
+                });
+          } else {
+            alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
+            console.log("Wrong password! Try again");
+          }
         } else {
-          alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
+          console.log(`Invalid entry`);
+          alert("Invalid data entry!");
         }
       })
       .catch(err => {
@@ -140,9 +177,8 @@ class Login extends React.Component {
           console.log(`ERROR: Server cannot be reached. Did you start it?`);
           console.log(`CAUSE: ${err.message}`);
         } else {
-          //alert(`Something went wrong during the login: ${err.message}`);
-          console.log(`ERROR: Something went wrong during login for user ${this.state.username}`)
-          console.log(`CAUSE: ${err.message}`)
+          console.log(`ERROR: Something went wrong during login for user ${this.state.username}`);
+          console.log(`CAUSE: ${err.message}`);
         }
       });
   }

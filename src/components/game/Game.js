@@ -36,8 +36,19 @@ class Game extends React.Component {
     localStorage.removeItem("token");
     localStorage.removeItem("loggedInUserId");
     localStorage.removeItem("visitedUserId");
+
+    fetch(`${getDomain()}/users/logout/${localStorage.getItem("loggedInUserUsername")}`, {//setting online status to OFFLINE
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+        .catch(err => {
+          console.log(`ERROR: Unable to set status for user ${localStorage.getItem("loggedInUserUsername")}`);
+          console.log(`CAUSE: ${err.message}`);
+        });
+
     this.props.history.push("/login");
-    //TODO: add fetch PUT update user for user.status = OFFLINE
   }
 
   componentDidMount() {
