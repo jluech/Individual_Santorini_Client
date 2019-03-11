@@ -53,7 +53,6 @@ const Label = styled.label`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  //margin-top: 20px;
 `;
 
 class Registrator extends React.Component {
@@ -108,14 +107,6 @@ class Registrator extends React.Component {
                     window.location.reload();
                 }
             })
-            /*.then(response => response.json())
-            .then(returnedUser =>  {
-                if(this.state.registered) {
-                    //console.log(`INFO: registered firstname = ${this.state.firstName} as ${returnedUser.firstName}`);
-                    //console.log(`INFO: registered lastname = ${this.state.lastName} as ${returnedUser.lastName}`);
-                    //console.log(`INFO: registered birthdate = ${this.state.birthdate} as ${returnedUser.birthdate}`);
-                }
-            })*/
             .catch(err => {
                 if (err.message.match(/Failed to fetch/)) {
                     alert("The server cannot be reached. Did you start it?");
@@ -136,6 +127,7 @@ class Registrator extends React.Component {
             })
     }
 
+    //TODO: add max date to birthdate
     render() {
         return (
             <BaseContainer>
@@ -156,13 +148,10 @@ class Registrator extends React.Component {
                         }}
                         />
                         <Label>Birthdate *</Label>
-                        {/*
-                        //TODO: Add max date to birthdate
-                        */}
                         <form action="/action_page.php">
                             <input
                                 type="date"
-                                name="birthdate"
+                                name="bdate"
                                 min="1900-01-01"
                                 max="2019-03-13"
                                 onChange={e => {
@@ -180,7 +169,7 @@ class Registrator extends React.Component {
                                     mm = '0' + mm;
                                 }
                                 let todayStr = yyyy + '-' + mm + '-' + dd;
-                                document.getElementById("date").setAttribute("max", todayStr);
+                                document.getElementById("bdate").setAttribute("max", todayStr);
                                 }}
                             />
                         </form>
@@ -208,9 +197,8 @@ class Registrator extends React.Component {
                             >
                                 Back to Login
                             </Button>
-                            {/*TODO: Set birthdate required again */}
                             <Button
-                                disabled={!this.state.username || !this.state.password }//|| !this.state.birthdate}
+                                disabled={!this.state.username || !this.state.password || !this.state.birthdate}
                                 width="50%"
                                 onClick={() => {
                                     this.register();
