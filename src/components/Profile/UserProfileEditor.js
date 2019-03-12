@@ -209,7 +209,7 @@ class UserProfileEditor extends React.Component {
                 })
             })
                 .then(response => {
-                    if(response.status === 202) {
+                    if(response.status === 204) {
                         console.log(`OK: Successfully updated data for user ${this.state.username}`);
                         alert(`Successfully updated data for user ${this.state.username}`);
                         updatedData = true;
@@ -218,6 +218,7 @@ class UserProfileEditor extends React.Component {
                         }
                     } else {
                         console.log(`ERROR: Could not update data with status ${response.status}`)
+                        alert("Could not update data");
                     }
                 })
                 .catch(err => {
@@ -225,7 +226,7 @@ class UserProfileEditor extends React.Component {
                     console.log(`CAUSE: ${err.message}`);
                 });
 
-            fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
+            fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {//check for correct current password
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -246,7 +247,7 @@ class UserProfileEditor extends React.Component {
                             })
                         })
                             .then(response => {
-                                if(response.status === 202) {
+                                if(response.status === 204) {
                                     console.log(`OK: Successfully updated password for user ${this.state.username}`);
                                     alert(`Successfully updated password for user ${this.state.username}`);
                                     updatedPassword = true;
@@ -285,7 +286,7 @@ class UserProfileEditor extends React.Component {
                 })
             })
                 .then(response => {
-                    if(response.status === 202) {
+                    if(response.status === 204) {
                         console.log(`OK: Successfully updated data for user ${this.state.username}`);
                         this.redirectProfile();
                     } else {
@@ -319,7 +320,7 @@ class UserProfileEditor extends React.Component {
                             })
                         })
                             .then(response => {
-                                if(response.status === 202) {
+                                if(response.status === 204) {
                                     console.log(`OK: Successfully updated password for user ${this.state.username}`);
                                     this.redirectProfile();
                                 } else {
