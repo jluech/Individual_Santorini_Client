@@ -166,6 +166,7 @@ class UserProfileEditor extends React.Component {
     }
 
     updateUserData() {
+        //TODO: security reason: add current password for verification along with new password to PUT fetch change password
         var hasDataUpdate = false;
         var hasPwUpdate = false;
         if((this.state.firstName !== this.state.oldFirstName)

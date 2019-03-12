@@ -121,7 +121,7 @@ class Login extends React.Component {
         const user = new User(returnedUser);
 
         if(!(this.state.username === null || this.state.username === "" || this.state.password === null || this.state.password === "")) {//valid data entry
-          if (!(user.username === null || user.username === undefined || user.password === null || user.password === undefined)) {//existing user
+          if (!(user.username === null || user.username === undefined)) {//existing user
             fetch(`${getDomain()}/validate/password/${this.state.password}/${user.id}`, {
               method: "GET",
               headers: {
@@ -153,7 +153,7 @@ class Login extends React.Component {
                           console.log(`CAUSE: ${err.message}`);
                         });
                   } else {
-                    alert("Wrong Password. Try again"); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
+                    alert(`Wrong Password. Try again`); //deliberately only informing about wrong password and neglecting possibly wrong/non-existent username for security reasons
                     console.log(`ERROR: Validating password with status ${response.status}`);
                   }
                 })

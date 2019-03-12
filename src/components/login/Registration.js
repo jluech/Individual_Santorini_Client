@@ -103,7 +103,7 @@ class Registrator extends React.Component {
                     return response;
                 } else {
                     console.log(`ERROR: Failed to register user ${this.state.username} with status ${response.status}`);
-                    alert("This Username is already taken. Please try again with a different Username");
+                    alert("Failed to register user. Please try again");
                     window.location.reload();
                 }
             })
@@ -112,6 +112,7 @@ class Registrator extends React.Component {
                     alert("The server cannot be reached. Did you start it?");
                 } else {
                     alert(`Something went wrong during the login: ${err.message}`);
+                    console.log(`Something went wrong during the login: ${err.message}`);
                     window.location.reload();
                 }
             })
