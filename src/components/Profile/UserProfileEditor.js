@@ -132,6 +132,16 @@ class UserProfileEditor extends React.Component {
     }
 
     componentDidMount() {
+        fetch(`${getDomain()}/users/username/${window.location.pathname.substr(window.location.pathname.lastIndexOf('_')+1)}`)
+            .then(response => response.json())
+            .then(user => {
+                localStorage.setItem("visitedUserId", user.id);
+            })
+            .catch(err => {
+                console.log(`ERROR: Unable to fetch user data for profile edit of user`);
+                console.log(`CAUSE: ${err.message}`);
+            });
+
         fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
             .then(response => response.json())
             .then(user => {
