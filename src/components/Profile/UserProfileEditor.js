@@ -175,6 +175,7 @@ class UserProfileEditor extends React.Component {
             || (this.state.birthdate !== this.state.oldBirthdate)
         ) {
             hasDataUpdate = true;
+            //TODO: get current password via GET fetch
         }
         if((this.state.currPw !== "")
             || (this.state.newPw !== "")
@@ -243,7 +244,8 @@ class UserProfileEditor extends React.Component {
                             },
                             body: JSON.stringify({
                                 id: this.state.id,
-                                password: this.state.newPw
+                                password: this.state.newPw,
+                                currentPassword: this.state.currPw
                             })
                         })
                             .then(response => {
@@ -316,7 +318,8 @@ class UserProfileEditor extends React.Component {
                             },
                             body: JSON.stringify({
                                 id: this.state.id,
-                                password: this.state.newPw
+                                password: this.state.newPw,
+                                currentPassword: this.state.currPw
                             })
                         })
                             .then(response => {

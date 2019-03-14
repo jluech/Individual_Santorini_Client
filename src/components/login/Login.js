@@ -142,7 +142,10 @@ class Login extends React.Component {
                       method: "PUT",
                       headers: {
                         "Content-Type": "application/json"
-                      }
+                      },
+                      body: JSON.stringify({
+                        password: this.state.password
+                      })
                     })
                         .then(() => {
                           // user login successfully worked --> navigate to the route /game in the GameRouter

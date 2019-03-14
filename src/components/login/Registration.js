@@ -91,6 +91,7 @@ class Registrator extends React.Component {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 birthdate: this.state.birthdate,
+                currentPassword: this.state.password,
                 password: this.state.password,
                 username: this.state.username,
                 creationDate: this.today
