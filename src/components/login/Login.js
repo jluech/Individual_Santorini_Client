@@ -147,9 +147,13 @@ class Login extends React.Component {
                         password: this.state.password
                       })
                     })
-                        .then(() => {
+                        .then((response) => {
                           // user login successfully worked --> navigate to the route /game in the GameRouter
-                          this.props.history.push(`/game`);
+                          if(response.status === 202) {
+                            this.props.history.push(`/game`);
+                          } else {
+                            console.log(`ERROR: Unable to set status for user ${this.state.username} with status ${response.status}`);
+                          }
                         })
                         .catch(err => {
                           console.log(`ERROR: Unable to set status for user ${this.state.username}`);

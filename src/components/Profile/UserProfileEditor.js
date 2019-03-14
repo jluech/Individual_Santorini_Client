@@ -290,6 +290,7 @@ class UserProfileEditor extends React.Component {
                 .then(response => {
                     if(response.status === 204) {
                         console.log(`OK: Successfully updated data for user ${this.state.username}`);
+                        if(this.state.username !== "") localStorage.setItem("loggedInUserUsername", this.state.username);//update username display if changed
                         this.redirectProfile();
                     } else {
                         console.log(`ERROR: Could not update data with status ${response.status}`)
