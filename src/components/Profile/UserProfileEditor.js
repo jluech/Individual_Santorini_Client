@@ -215,7 +215,7 @@ class UserProfileEditor extends React.Component {
                             this.redirectProfile();
                         }
                     } else {
-                        console.log(`ERROR: Could not update data with status ${response.status}`)
+                        console.log(`ERROR: Could not update data with status ${response.status}`);
                         alert("Could not update data");
                     }
                 })

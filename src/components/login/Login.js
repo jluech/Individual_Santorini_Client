@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { BaseContainer } from "../../helpers/layout";
 import { getDomain } from "../../helpers/getDomain";
 import User from "../shared/models/User";
-import {withRouter} from "react-router-dom";//removed import for 'Redirect'
+import {withRouter} from "react-router-dom";
 import { Button } from "../../views/design/Button";
 
 const FormContainer = styled.div`

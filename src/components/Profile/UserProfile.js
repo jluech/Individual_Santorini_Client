@@ -31,7 +31,6 @@ const Form = styled.div`
 
 const Container = styled.div`
   margin: 20px 0;
-  //margin-right: 10px;
   width: 200px;
   padding: 10px;
   border-radius: 6px;
@@ -47,7 +46,6 @@ const ProfileContainer = styled.div`
   border-radius: 6px;
   display: flex;
   align-items: (flex-start) (center);
-  //border: 1px solid #ffffff26;
 `;
 
 const Username = styled.div`
@@ -99,7 +97,6 @@ class UserProfile extends React.Component {
             onlineStatus: null,
             isProfileOwner: false,
             id: null,
-            //user: null,
             validToken: false
         };
     }
