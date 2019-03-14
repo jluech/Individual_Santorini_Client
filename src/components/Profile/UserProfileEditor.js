@@ -162,11 +162,9 @@ class UserProfileEditor extends React.Component {
 
     handleInputChange(key, value) {
         this.setState({ [key]: value });
-        //console.log(`changing ${key} to ${value}`);
     }
 
     updateUserData() {
-        //TODO: security reason: add current password for verification along with new password to PUT fetch change password
         var hasDataUpdate = false;
         var hasPwUpdate = false;
         if((this.state.firstName !== this.state.oldFirstName)
@@ -175,7 +173,6 @@ class UserProfileEditor extends React.Component {
             || (this.state.birthdate !== this.state.oldBirthdate)
         ) {
             hasDataUpdate = true;
-            //TODO: get current password via GET fetch
         }
         if((this.state.currPw !== "")
             || (this.state.newPw !== "")
