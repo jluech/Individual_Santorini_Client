@@ -211,7 +211,7 @@ class UserProfileEditor extends React.Component {
                 .then(response => {
                     if(response.status === 204) {
                         console.log(`OK: Successfully updated data for user ${this.state.username}`);
-                        alert(`Successfully updated data for user ${this.state.username}`);
+                        //alert(`Successfully updated data for user ${this.state.username}`);
                         updatedData = true;
                         if(updatedData && updatedPassword) {
                             this.redirectProfile();
@@ -249,7 +249,7 @@ class UserProfileEditor extends React.Component {
                             .then(response => {
                                 if(response.status === 204) {
                                     console.log(`OK: Successfully updated password for user ${this.state.username}`);
-                                    alert(`Successfully updated password for user ${this.state.username}`);
+                                    //alert(`Successfully updated password for user ${this.state.username}`);
                                     updatedPassword = true;
                                     if(updatedData && updatedPassword) {
                                         this.redirectProfile();
