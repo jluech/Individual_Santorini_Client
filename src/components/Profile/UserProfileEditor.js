@@ -135,8 +135,6 @@ class UserProfileEditor extends React.Component {
         fetch(`${getDomain()}/users/${localStorage.getItem("visitedUserId")}`)
             .then(response => response.json())
             .then(user => {
-                //console.log(`INFO: username = ${user.username}`);
-                //console.log(`INFO: visitedUserID = ${user.id}`);
                 this.setState({isProfileOwner: localStorage.getItem("visitedUserId") === localStorage.getItem("loggedInUserId")});
                 this.setState({id: user.id});
                 this.setState({username: user.username});
@@ -148,7 +146,6 @@ class UserProfileEditor extends React.Component {
                 this.setState({birthdate: user.birthdate});
                 this.setState({oldBirthdate: user.birthdate});
                 this.setState({birthdateStr: user.birthdateStr});
-                //this.setState({oldBirthdateStr: user.birthdateStr});
             })
             .then(() => {
                 console.log(`OK: Fetched user data for profile edit of user ${this.state.username} with id ${this.state.id}`);
@@ -209,9 +206,9 @@ class UserProfileEditor extends React.Component {
                 .then(response => {
                     if(response.status === 204) {
                         console.log(`OK: Successfully updated data for user ${this.state.username}`);
-                        //alert(`Successfully updated data for user ${this.state.username}`);
                         updatedData = true;
                         if(updatedData && updatedPassword) {
+                            if(this.state.username !== "") localStorage.setItem("loggedInUserUsername", this.state.username);//update username display if changed
                             this.redirectProfile();
                         }
                     } else {
@@ -248,7 +245,6 @@ class UserProfileEditor extends React.Component {
                             .then(response => {
                                 if(response.status === 204) {
                                     console.log(`OK: Successfully updated password for user ${this.state.username}`);
-                                    //alert(`Successfully updated password for user ${this.state.username}`);
                                     updatedPassword = true;
                                     if(updatedData && updatedPassword) {
                                         this.redirectProfile();
@@ -270,7 +266,6 @@ class UserProfileEditor extends React.Component {
                     console.log(`CAUSE: ${err.message}`);
                 });
         } else if(hasDataUpdate && !hasPwUpdate) {
-            //console.log("Has Data Update");
             fetch(`${getDomain()}/users/${this.state.id}`, { //try updating user data
                 method: "PUT",
                 headers: {
@@ -298,7 +293,6 @@ class UserProfileEditor extends React.Component {
                     console.log(`CAUSE: ${err.message}`);
                 })
         } else if(!hasDataUpdate && hasPwUpdate) {
-            //console.log("Has Password Update");
             fetch(`${getDomain()}/validate/password/${this.state.currPw}/${this.state.id}`, {
                 method: "GET",
                 headers: {
@@ -349,7 +343,7 @@ class UserProfileEditor extends React.Component {
 
     redirectProfile(editBoolean) {
         if(editBoolean) sleep(500);
-        this.props.history.push(`/users/profile/&_${this.state.username}`);
+        this.props.history.push(`/users/profile/&_${localStorage.getItem("loggedInUserUsername")}`);
         if(editBoolean) window.location.reload();
     }
 
